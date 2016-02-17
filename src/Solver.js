@@ -1,5 +1,6 @@
 import {Point} from './Point.js';
 import {Vector} from './Vector.js';
+import {Path} from './Path.js';
 
 /**
  * @class Solver
@@ -21,18 +22,34 @@ export class Solver {
     }
 
     findOpening() {
-        let size = this.matrix.getSize(),
+        // rechts/rechtdoor/links/omdraaien
+        let angles = [90, 0, -90, -180, -270],
+            size = this.matrix.getSize(),
+            path = new Path(),
             position = new Point(1, 0),
             direction = new Vector(1, 0),
-            guard = 10;
+            guard = (2 * size.width) + (2 * size.height);
 
         while (0 < guard) {
-            direction = direction.rotate(90);
-            console.log(`x: ${direction.x}; y: ${direction.y}`, direction.toString());
+            angles.every((angle) => {
+                let ret = true,
+                    tryDirection = direction.rotate(angle),
+                    tryPosition = position.add(new Point(tryDirection.x, tryDirection.y));
+
+                if (this.isPath(tryPosition)) {
+                    //console.log(angle, tryDirection.toString(), tryPosition.toString());
+                    direction = tryDirection;
+                    position = tryPosition;
+
+                    path.add(position);
+                    console.log(position.toString(), direction.degrees);
+                    ret = false;
+                }
+                return ret;
+            });
+
             guard -= 1;
         }
-
-        //throw 'Cannot find opening';
     }
 
     simple() {

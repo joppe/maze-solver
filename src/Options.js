@@ -1,8 +1,8 @@
 const defaultOptions = {
-        mazewidth: 50,
-        mazehight: 30,
-        mazecell: 6,
-        mazewall: 2,
+        mazewidth: 5,
+        mazehight: 5,
+        mazecell: 10,
+        mazewall: 10,
         lengthfactor: 5,
         wallr: 0,
         wallg: 0,
