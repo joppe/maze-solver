@@ -1,12 +1,10 @@
 import {Matrix} from './Matrix.js';
 
-const SCAN_HORIZONTAL = 0,
-    SCAN_VERTICAL = 1;
+const SCAN_CELL = 0,
+    SCAN_WALL = 1;
 
 export class Scanner {
     /**
-     * Scan horizontal line/vertical line/horizontal line ...
-     *
      * @param {Canvas} canvas
      * @param {Options} options
      */
@@ -36,22 +34,29 @@ export class Scanner {
         return true;
     }
 
+    /**
+     * @returns {Matrix}
+     */
     scan() {
-        let y = this.options.get('mazecell'),
-            scanMode = SCAN_HORIZONTAL,
+        let y = 0,
+            yScanMode = SCAN_CELL,
             matrix = new Matrix();
 
         while (y < this.canvas.getHeight()) {
-            let x = this.options.get('mazecell');
+            let x = 0,
+                xScanMode = SCAN_CELL;
 
             while (x < this.canvas.getWidth()) {
                 matrix.add(x, y, this.isWall(x, y));
-                x += this.options.get('mazecell') + this.options.get('mazewall');
+
+                x += (xScanMode === SCAN_CELL ? this.options.get('mazecell') : this.options.get('mazewall'));
+
+                xScanMode = SCAN_CELL === xScanMode ? SCAN_WALL : SCAN_CELL;
             }
 
-            y += this.options.get('mazecell') + this.options.get('mazewall');
+            y += (yScanMode === SCAN_CELL ? this.options.get('mazecell') : this.options.get('mazewall'));
 
-            scanMode = (scanMode + 1) % 2;
+            yScanMode = SCAN_CELL === yScanMode ? SCAN_WALL : SCAN_CELL;
         }
 
         return matrix;

@@ -8,7 +8,7 @@ export class Canvas {
      */
     constructor(width, height) {
         this.width = width;
-        this.heigth = height;
+        this.height = height;
 
         this.el = document.createElement('canvas');
 
@@ -34,7 +34,7 @@ export class Canvas {
      * @returns {number}
      */
     getHeight() {
-        return this.heigth;
+        return this.height;
     }
 
     /**
@@ -58,5 +58,24 @@ export class Canvas {
         let imageData = this.getContext().getImageData(x, y, width, height);
 
         return imageData.data;
+    }
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} width
+     * @param {number} height
+     * @param {string} color
+     * @returns {Canvas}
+     */
+    drawRectangle(x, y, width, height, color) {
+        let ctx = this.getContext();
+
+        ctx.beginPath();
+        ctx.rect(x, y, width, height);
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        return this;
     }
 }
