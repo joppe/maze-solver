@@ -1,5 +1,6 @@
 node_modules
 .idea
-dist/vendor
+dist
+!dist/system.conf.js
 images
 !images/.gitkeep
