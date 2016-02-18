@@ -5,7 +5,13 @@ import {Scanner} from './Scanner.js';
 import {Solver} from './Solver.js';
 import {Point} from './Point.js';
 
+/**
+ * @class MazeSolver
+ */
 class MazeSolver {
+    /**
+     * @param {Object} options
+     */
     static solve(options) {
         MazeImage.fetch(options).then((image) => {
             let canvas = new Canvas(image.getWidth(), image.getHeight()),
@@ -21,7 +27,7 @@ class MazeSolver {
             normalized.appendTo(document.body);
             solution.appendTo(document.body);
 
-            canvas.getContext().drawImage(image.getElement(), 0, 0);
+            canvas.drawImage(image.getElement(), new Point(0, 0));
 
             scanner = new Scanner(canvas, options);
             matrix = scanner.scan();
