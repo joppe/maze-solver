@@ -30,19 +30,37 @@ export class Solver {
     }
 
     /**
+     * @param {Point} position
+     * @returns {boolean}
+     */
+    isInside(position) {
+        let size = this.matrix.getSize();
+
+        return (1 < position.x && (size.width - 1) > position.x && 1 < position.y && (size.height - 1) > position.y);
+    }
+
+    /**
+     * @param {Point} position
+     * @returns {boolean}
+     */
+    isOutside(position) {
+        let size = this.matrix.getSize();
+
+        return (0 === position.x || (size.width - 1) === position.x || 0 === position.y || (size.height - 1 === position.y));
+    }
+
+    /**
      * @returns {Path}
      */
     simple() {
         let angles = [90, 0, -90, -180],
-            size = this.matrix.getSize(),
             path = new Path(),
             position = new Point(1, 0),
             direction = new Vector(1, 0),
-            wasInside = false,
-            guard = 100;
+            wasInside = false;
 
-        while (0 < guard) {
-            if (false === wasInside || (position.x > 1 && position.x < (size.width - 1) && position.y > 1 && position.y < (size.height - 1))) {
+        while (false === wasInside || (true === wasInside && false === this.isOutside(position))) {
+            if (false === wasInside && this.isInside(position)) {
                 wasInside = true;
             }
 
@@ -62,8 +80,6 @@ export class Solver {
 
                 return ret;
             });
-
-            guard -= 1;
         }
 
         return path;
