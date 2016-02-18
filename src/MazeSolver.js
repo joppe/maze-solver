@@ -32,15 +32,16 @@ class MazeSolver {
             scanner = new Scanner(canvas, options);
             matrix = scanner.scan();
 
-            matrix.iterate((x, y, isWall) => {
-                normalized.drawRectangle(new Point(x, y), 1, 1, isWall ? 'black' : 'white');
+            matrix.iterate((x, y, cell) => {
+                normalized.drawRectangle(new Point(x, y), 1, 1, cell.isWall ? 'black' : 'white');
             });
 
             solver = new Solver(matrix);
             path = solver.simple();
 
-            path.iterate((point) => {
-                solution.drawRectangle(point, 1, 1, 'green');
+            solution.drawImage(image.getElement(), new Point(0, 0));
+            path.iterate((cell) => {
+                solution.drawRectangle(cell.position, cell.width, cell.height, 'green');
             });
         });
     }

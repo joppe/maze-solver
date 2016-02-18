@@ -39,10 +39,10 @@ export class Matrix {
     /**
      * @param {number} column
      * @param {number} row
-     * @param {*} value
+     * @param {Cell} cell
      * @returns {Matrix}
      */
-    add(column, row, value) {
+    add(column, row, cell) {
         column = this.normalizeColumn(column);
         row = this.normalizeRow(row);
 
@@ -50,7 +50,7 @@ export class Matrix {
             this.cells[column] = {};
         }
 
-        this.cells[column][row] = value;
+        this.cells[column][row] = cell;
 
         return this;
     }
@@ -58,7 +58,7 @@ export class Matrix {
     /**
      * @param {number} column
      * @param {number} row
-     * @returns {*}
+     * @returns {Cell}
      */
     get(column, row) {
         if (this.isValid(column, row)) {
@@ -108,8 +108,8 @@ export class Matrix {
     toString() {
         let str = '';
 
-        this.iterate((column, row, value) => {
-            str += `column: ${column}, row: ${row}, value: ${value}` + "\n";
+        this.iterate((column, row, cell) => {
+            str += `column: ${column}, row: ${row}, cell: ${cell.toString()}` + "\n";
         });
 
         return str;

@@ -18,7 +18,11 @@ export class Solver {
      * @returns {boolean}
      */
     isWall(position) {
-        return true === this.matrix.get(position.x, position.y);
+        if (this.matrix.isValid(position.x, position.y)) {
+            return this.matrix.get(position.x, position.y).isWall;
+        }
+
+        return false;
     }
 
     /**
@@ -26,7 +30,7 @@ export class Solver {
      * @returns {boolean}
      */
     isPath(position) {
-        return false === this.matrix.get(position.x, position.y);
+        return !this.isWall(position);
     }
 
     /**
@@ -73,7 +77,7 @@ export class Solver {
                     direction = tryDirection;
                     position = tryPosition;
 
-                    path.add(position);
+                    path.add(this.matrix.get(position.x, position.y));
 
                     ret = false;
                 }

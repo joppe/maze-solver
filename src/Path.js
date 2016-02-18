@@ -7,11 +7,11 @@ export class Path {
     }
 
     /**
-     * @param {Point} point
+     * @param {Cell} cell
      * @returns {Path}
      */
-    add(point) {
-        this.points.push(point);
+    add(cell) {
+        this.points.push(cell);
 
         return this;
     }
@@ -29,8 +29,8 @@ export class Path {
     toString() {
         let str = '';
 
-        this.points.forEach((point) => {
-            str += point.toString() + "\n";
+        this.points.forEach((cell) => {
+            str += cell.toString() + "\n";
         });
 
         return str;

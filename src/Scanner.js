@@ -1,9 +1,13 @@
 import {Matrix} from './Matrix.js';
 import {Point} from './Point.js';
+import {Cell} from './Cell.js';
 
 const SCAN_CELL = 0,
     SCAN_WALL = 1;
 
+/**
+ * @class Scanner
+ */
 export class Scanner {
     /**
      * @param {Canvas} canvas
@@ -44,17 +48,26 @@ export class Scanner {
 
         while (y < this.canvas.getHeight()) {
             let x = 0,
+                height = (yScanMode === SCAN_CELL ? this.options.get('mazecell') : this.options.get('mazewall')),
                 xScanMode = SCAN_CELL;
 
             while (x < this.canvas.getWidth()) {
-                matrix.add(x, y, this.isWall(new Point(x, y)));
+                let width = (xScanMode === SCAN_CELL ? this.options.get('mazecell') : this.options.get('mazewall')),
+                    position = new Point(x, y);
 
-                x += (xScanMode === SCAN_CELL ? this.options.get('mazecell') : this.options.get('mazewall'));
+                matrix.add(x, y, new Cell(
+                    position,
+                    width,
+                    height,
+                    this.isWall(position)
+                ));
+
+                x += width;
 
                 xScanMode = SCAN_CELL === xScanMode ? SCAN_WALL : SCAN_CELL;
             }
 
-            y += (yScanMode === SCAN_CELL ? this.options.get('mazecell') : this.options.get('mazewall'));
+            y += height;
 
             yScanMode = SCAN_CELL === yScanMode ? SCAN_WALL : SCAN_CELL;
         }
