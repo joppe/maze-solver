@@ -48,31 +48,44 @@ export class Canvas {
     }
 
     /**
-     * @param {Point} point
+     * @param {Point} position
      * @param {number} width
      * @param {number} height
      * @returns {CanvasPixelArray}
      */
-    getImageData(point, width, height) {
-        let imageData = this.getContext().getImageData(point.x, point.y, width, height);
+    getImageData(position, width, height) {
+        let imageData = this.getContext().getImageData(position.x, position.y, width, height);
 
         return imageData.data;
     }
 
     /**
-     * @param {Point} point
+     * @param {Point} position
      * @param {number} width
      * @param {number} height
      * @param {string} color
      * @returns {Canvas}
      */
-    drawRectangle(point, width, height, color) {
+    drawRectangle(position, width, height, color) {
         let ctx = this.getContext();
 
         ctx.beginPath();
-        ctx.rect(point.x, point.y, width, height);
+        ctx.rect(position.x, position.y, width, height);
         ctx.fillStyle = color;
         ctx.fill();
+
+        return this;
+    }
+
+    /**
+     * @param {HTMLImageElement} image
+     * @param {Point} position
+     * @returns {Canvas}
+     */
+    drawImage(image, position) {
+        let ctx = this.getContext();
+
+        ctx.drawImage(image, position.x, position.y);
 
         return this;
     }
