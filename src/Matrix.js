@@ -11,29 +11,29 @@ export class Matrix {
     }
 
     /**
-     * @param {*} val
+     * @param {*} x
      * @returns {number}
      */
-    normalizeX(val) {
-        if (undefined === this.x[val]) {
-            this.x[val] = this.xCount;
+    normalizeX(x) {
+        if (undefined === this.x[x]) {
+            this.x[x] = this.xCount;
             this.xCount += 1;
         }
 
-        return this.x[val];
+        return this.x[x];
     }
 
     /**
-     * @param {*} val
+     * @param {*} y
      * @returns {number}
      */
-    normalizeY(val) {
-        if (undefined === this.y[val]) {
-            this.y[val] = this.yCount;
+    normalizeY(y) {
+        if (undefined === this.y[y]) {
+            this.y[y] = this.yCount;
             this.yCount += 1;
         }
 
-        return this.y[val];
+        return this.y[y];
     }
 
     /**
