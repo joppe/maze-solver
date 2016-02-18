@@ -4,88 +4,88 @@
 export class Matrix {
     constructor() {
         this.cells = {};
-        this.yCount = 0;
-        this.xCount = 0;
-        this.x = {};
-        this.y = {};
+        this.rowCount = 0;
+        this.columnCount = 0;
+        this.columns = {};
+        this.rows = {};
     }
 
     /**
-     * @param {*} x
+     * @param {*} column
      * @returns {number}
      */
-    normalizeX(x) {
-        if (undefined === this.x[x]) {
-            this.x[x] = this.xCount;
-            this.xCount += 1;
+    normalizeColumn(column) {
+        if (undefined === this.columns[column]) {
+            this.columns[column] = this.columnCount;
+            this.columnCount += 1;
         }
 
-        return this.x[x];
+        return this.columns[column];
     }
 
     /**
-     * @param {*} y
+     * @param {*} row
      * @returns {number}
      */
-    normalizeY(y) {
-        if (undefined === this.y[y]) {
-            this.y[y] = this.yCount;
-            this.yCount += 1;
+    normalizeRow(row) {
+        if (undefined === this.rows[row]) {
+            this.rows[row] = this.rowCount;
+            this.rowCount += 1;
         }
 
-        return this.y[y];
+        return this.rows[row];
     }
 
     /**
-     * @param {number} x
-     * @param {number} y
+     * @param {number} column
+     * @param {number} row
      * @param {*} value
      * @returns {Matrix}
      */
-    add(x, y, value) {
-        x = this.normalizeX(x);
-        y = this.normalizeY(y);
+    add(column, row, value) {
+        column = this.normalizeColumn(column);
+        row = this.normalizeRow(row);
 
-        if (undefined === this.cells[x]) {
-            this.cells[x] = {};
+        if (undefined === this.cells[column]) {
+            this.cells[column] = {};
         }
 
-        this.cells[x][y] = value;
+        this.cells[column][row] = value;
 
         return this;
     }
 
     /**
-     * @param {number} x
-     * @param {number} y
+     * @param {number} column
+     * @param {number} row
      * @returns {*}
      */
-    get(x, y) {
-        if (this.isValid(x, y)) {
-            return this.cells[x][y];
+    get(column, row) {
+        if (this.isValid(column, row)) {
+            return this.cells[column][row];
         }
 
-        throw `Cell not found for x=${x} and y=${y}`;
+        throw `Cell not found for column=${column} and row=${row}`;
     }
 
     /**
-     * @param {number} x
-     * @param {number} y
+     * @param {number} column
+     * @param {number} row
      * @returns {boolean}
      */
-    isValid(x, y) {
-        return (undefined !== this.cells[x] && undefined !== this.cells[x][y]);
+    isValid(column, row) {
+        return (undefined !== this.cells[column] && undefined !== this.cells[column][row]);
     }
 
     /**
      * @param {Function} callback
      */
     iterate(callback) {
-        for (let x in this.cells) {
-            if (this.cells.hasOwnProperty(x)) {
-                for (let y in this.cells[x]) {
-                    if (this.cells[x].hasOwnProperty(y)) {
-                        callback(x, y, this.cells[x][y]);
+        for (let column in this.cells) {
+            if (this.cells.hasOwnProperty(column)) {
+                for (let row in this.cells[column]) {
+                    if (this.cells[column].hasOwnProperty(row)) {
+                        callback(column, row, this.cells[column][row]);
                     }
                 }
             }
@@ -97,8 +97,8 @@ export class Matrix {
      */
     getSize() {
         return {
-            width: this.xCount,
-            height: this.yCount
+            width: this.columnCount,
+            height: this.rowCount
         }
     }
 
@@ -108,8 +108,8 @@ export class Matrix {
     toString() {
         let str = '';
 
-        this.iterate((x, y, value) => {
-            str += `x: ${x}, y: ${y}, value: ${value}` + "\n";
+        this.iterate((column, row, value) => {
+            str += `column: ${column}, row: ${row}, value: ${value}` + "\n";
         });
 
         return str;
