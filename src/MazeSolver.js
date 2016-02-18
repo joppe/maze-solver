@@ -12,11 +12,14 @@ class MazeSolver {
                 scanner,
                 matrix,
                 normalized = new Canvas(image.getWidth(), image.getHeight()),
-                solver;
+                solution = new Canvas(image.getWidth(), image.getHeight()),
+                solver,
+                path;
 
             image.appendTo(document.body);
             canvas.appendTo(document.body);
             normalized.appendTo(document.body);
+            solution.appendTo(document.body);
 
             canvas.getContext().drawImage(image.getElement(), 0, 0);
 
@@ -28,7 +31,11 @@ class MazeSolver {
             });
 
             solver = new Solver(matrix);
-            console.log(solver.simple());
+            path = solver.simple();
+
+            path.iterate((point) => {
+                solution.drawRectangle(point, 1, 1, 'green');
+            });
         });
     }
 }
