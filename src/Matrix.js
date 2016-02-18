@@ -14,7 +14,7 @@ export class Matrix {
      * @param {*} val
      * @returns {number}
      */
-    getXIndex(val) {
+    normalizeX(val) {
         if (undefined === this.x[val]) {
             this.x[val] = this.xCount;
             this.xCount += 1;
@@ -27,7 +27,7 @@ export class Matrix {
      * @param {*} val
      * @returns {number}
      */
-    getYIndex(val) {
+    normalizeY(val) {
         if (undefined === this.y[val]) {
             this.y[val] = this.yCount;
             this.yCount += 1;
@@ -37,14 +37,14 @@ export class Matrix {
     }
 
     /**
-     * @param {number} a
-     * @param {number} b
+     * @param {number} x
+     * @param {number} y
      * @param {*} value
      * @returns {Matrix}
      */
-    add(a, b, value) {
-        let x = this.getXIndex(a),
-            y = this.getYIndex(b);
+    add(x, y, value) {
+        x = this.normalizeX(x);
+        y = this.normalizeY(y);
 
         if (undefined === this.cells[x]) {
             this.cells[x] = {};
@@ -61,11 +61,20 @@ export class Matrix {
      * @returns {*}
      */
     get(x, y) {
-        if (undefined === this.cells[x] || undefined === this.cells[x][y]) {
-            throw `Cell not found for x=${x} and y=${y}`;
+        if (this.isValid(x, y)) {
+            return this.cells[x][y];
         }
 
-        return this.cells[x][y];
+        throw `Cell not found for x=${x} and y=${y}`;
+    }
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @returns {boolean}
+     */
+    isValid(x, y) {
+        return (undefined !== this.cells[x] && undefined !== this.cells[x][y]);
     }
 
     /**

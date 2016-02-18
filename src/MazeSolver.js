@@ -3,6 +3,7 @@ import {MazeImage} from './MazeImage.js';
 import {Canvas} from './Canvas.js';
 import {Scanner} from './Scanner.js';
 import {Solver} from './Solver.js';
+import {Point} from './Point.js';
 
 class MazeSolver {
     static solve(options) {
@@ -23,11 +24,11 @@ class MazeSolver {
             matrix = scanner.scan();
 
             matrix.iterate((x, y, isWall) => {
-                normalized.drawRectangle(x, y, 1, 1, isWall ? 'black' : 'white');
+                normalized.drawRectangle(new Point(x, y), 1, 1, isWall ? 'black' : 'white');
             });
 
             solver = new Solver(matrix);
-            console.log(solver.findOpening());
+            console.log(solver.simple());
         });
     }
 }

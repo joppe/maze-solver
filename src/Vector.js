@@ -50,9 +50,7 @@ export class Vector {
      * @return {Vector}
      */
     rotate(degrees) {
-        this.degrees += degrees;
-
-        return this;
+        return new Vector(this.size, this.degrees + degrees);
     }
     /**
      * @returns {Vector}

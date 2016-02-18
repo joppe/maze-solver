@@ -1,4 +1,5 @@
 import {Matrix} from './Matrix.js';
+import {Point} from './Point.js';
 
 const SCAN_CELL = 0,
     SCAN_WALL = 1;
@@ -14,12 +15,11 @@ export class Scanner {
     }
 
     /**
-     * @param {number} x
-     * @param {number} y
+     * @param {Point} point
      * @returns {boolean}
      */
-    isWall(x, y) {
-        let data = this.canvas.getImageData(x, y, this.options.get('mazewall'), this.options.get('mazewall'));
+    isWall(point) {
+        let data = this.canvas.getImageData(point, this.options.get('mazewall'), this.options.get('mazewall'));
 
         for (let i = 0, n = data.length; i < n; i += 4) {
             let red = data[i],
@@ -47,7 +47,7 @@ export class Scanner {
                 xScanMode = SCAN_CELL;
 
             while (x < this.canvas.getWidth()) {
-                matrix.add(x, y, this.isWall(x, y));
+                matrix.add(x, y, this.isWall(new Point(x, y)));
 
                 x += (xScanMode === SCAN_CELL ? this.options.get('mazecell') : this.options.get('mazewall'));
 

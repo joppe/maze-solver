@@ -21,9 +21,8 @@ export class Solver {
         return false === this.matrix.get(position.x, position.y);
     }
 
-    findOpening() {
-        // rechts/rechtdoor/links/omdraaien
-        let angles = [90, 0, -90, -180, -270],
+    simple() {
+        let angles = [90, 0, -90, -180],
             size = this.matrix.getSize(),
             path = new Path(),
             position = new Point(1, 0),
@@ -37,12 +36,11 @@ export class Solver {
                     tryPosition = position.add(new Point(tryDirection.x, tryDirection.y));
 
                 if (this.isPath(tryPosition)) {
-                    //console.log(angle, tryDirection.toString(), tryPosition.toString());
                     direction = tryDirection;
                     position = tryPosition;
 
                     path.add(position);
-                    console.log(position.toString(), direction.degrees);
+
                     ret = false;
                 }
                 return ret;
@@ -50,9 +48,7 @@ export class Solver {
 
             guard -= 1;
         }
-    }
 
-    simple() {
-
+        console.log(path);
     }
 }
