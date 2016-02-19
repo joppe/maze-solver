@@ -1,6 +1,7 @@
 node_modules
 .idea
-dist
+dist/*
 !dist/system.conf.js
-images
+!dist/worker.js
+images/*
 !images/.gitkeep
