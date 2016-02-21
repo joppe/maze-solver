@@ -66,4 +66,11 @@ export class Options {
 
         return array;
     }
+
+    /**
+     * @returns {Object}
+     */
+    raw() {
+        return this.options;
+    }
 }

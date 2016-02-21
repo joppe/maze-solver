@@ -3,7 +3,7 @@ import {MazeImage} from './MazeImage.js';
 import {Canvas} from './Canvas.js';
 import {Scanner} from './Scanner.js';
 import {Solver} from './Solver.js';
-import {Point} from './Point.js';
+import {Point} from './geometry/Point.js';
 
 /**
  * @class MazeSolver
