@@ -1,5 +1,5 @@
-import {Point} from './geometry/Point.js';
-import {Vector} from './geometry/Vector.js';
+import {Point} from './../geometry/Point.js';
+import {Vector} from './../geometry/Vector.js';
 import {Path} from './Path.js';
 
 /**
