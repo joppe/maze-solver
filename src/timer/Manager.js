@@ -57,13 +57,13 @@ export var Manager = {
 
                 if (null === current) {
                     current = ids[0];
-                    value = current;
+                    value = [current, timers[current]];
                 } else {
                     let index = ids.indexOf(current);
 
                     if (-1 !== index && ids.length > (index + 1)) {
                         current = ids[index + 1];
-                        value = current;
+                        value = [current, timers[current]];
                     }
                 }
 
