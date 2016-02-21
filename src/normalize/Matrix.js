@@ -39,7 +39,7 @@ export class Matrix {
     /**
      * @param {number} column
      * @param {number} row
-     * @param {Cell} cell
+     * @param {*} cell
      * @returns {Matrix}
      */
     add(column, row, cell) {
@@ -58,7 +58,7 @@ export class Matrix {
     /**
      * @param {number} column
      * @param {number} row
-     * @returns {Cell}
+     * @returns {*}
      */
     get(column, row) {
         if (this.isValid(column, row)) {
@@ -78,14 +78,14 @@ export class Matrix {
     }
 
     /**
-     * @param {Function} callback
+     * @returns {Array}
      */
-    iterate(callback) {
+    * getIterator() {
         for (let column in this.cells) {
             if (this.cells.hasOwnProperty(column)) {
                 for (let row in this.cells[column]) {
                     if (this.cells[column].hasOwnProperty(row)) {
-                        callback(column, row, this.cells[column][row]);
+                        yield [column, row, this.cells[column][row]];
                     }
                 }
             }
@@ -108,9 +108,9 @@ export class Matrix {
     toString() {
         let str = '';
 
-        this.iterate((column, row, cell) => {
-            str += `column: ${column}, row: ${row}, cell: ${cell.toString()}` + "\n";
-        });
+        for (let [column, row, value] of this.getIterator()) {
+            str += `column: ${column}, row: ${row}, cell: ${value}` + "\n";
+        }
 
         return str;
     }
