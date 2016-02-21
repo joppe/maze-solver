@@ -1,4 +1,4 @@
-import {Xhr} from './Xhr.js';
+import {Xhr} from './request/Xhr.js';
 
 /**
  * @class MazeImage
