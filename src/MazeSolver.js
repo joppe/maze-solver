@@ -4,6 +4,7 @@ import {Canvas} from './dom/Canvas.js';
 import {Scanner} from './normalize/Scanner.js';
 import {Solver} from './solve/Solver.js';
 import {Point} from './geometry/Point.js';
+import {Manager as TimerManager} from './timer/Manager.js';
 
 /**
  * @class MazeSolver
@@ -13,7 +14,11 @@ class MazeSolver {
      * @param {Object} options
      */
     static solve(options) {
+        TimerManager.start('fetch-image');
+
         MazeImage.fetch(options).then((image) => {
+            TimerManager.end('fetch-image');
+
             let canvas = new Canvas(image.getWidth(), image.getHeight()),
                 scanner,
                 matrix,
@@ -29,7 +34,24 @@ class MazeSolver {
 
             canvas.drawImage(image.getElement(), new Point(0, 0));
 
-            scanner = new Scanner(canvas, options);
+            scanner = new Scanner(canvas.getImageData(new Point(0, 0), canvas.getWidth(), canvas.getHeight()), {
+                width: canvas.getWidth(),
+                height: canvas.getHeight()
+            }, options);
+            TimerManager.start('scan');
+            matrix = scanner.scan();
+            TimerManager.end('scan');
+
+            for (let [col, row, value] of matrix.getIterator()) {
+                console.log(col, row, value.isWall);
+            }
+
+            // Display timers
+            for (let [id, timer] of TimerManager) {
+                console.log(id, timer.getDuration());
+            }
+
+            /*/
             matrix = scanner.scan();
 
             matrix.iterate((x, y, cell) => {
@@ -43,8 +65,12 @@ class MazeSolver {
             path.iterate((cell) => {
                 solution.drawRectangle(cell.position, cell.width, cell.height, 'green');
             });
+            /**/
         });
     }
 }
 
-MazeSolver.solve(new Options());
+MazeSolver.solve(new Options({
+    mazewidth: 5,
+    mazehight: 5
+}));
