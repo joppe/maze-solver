@@ -1,5 +1,5 @@
 import {Matrix} from './Matrix.js';
-import {Point} from './geometry/Point.js';
+import {Point} from './../geometry/Point.js';
 import {Cell} from './Cell.js';
 
 const SCAN_CELL = 0,

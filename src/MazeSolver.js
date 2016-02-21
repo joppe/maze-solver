@@ -1,7 +1,7 @@
 import {Options} from './Options.js';
 import {MazeImage} from './MazeImage.js';
 import {Canvas} from './dom/Canvas.js';
-import {Scanner} from './Scanner.js';
+import {Scanner} from './normalize/Scanner.js';
 import {Solver} from './Solver.js';
 import {Point} from './geometry/Point.js';
 
