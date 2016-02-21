@@ -1,5 +1,5 @@
-import {Options} from './Options.js';
-import {MazeImage} from './MazeImage.js';
+import {Options} from './maze/Options.js';
+import {MazeImage} from './maze/MazeImage.js';
 import {Canvas} from './dom/Canvas.js';
 import {Scanner} from './normalize/Scanner.js';
 import {Solver} from './solve/Solver.js';
