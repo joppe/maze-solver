@@ -1,6 +1,6 @@
 import {Matrix} from './Matrix.js';
 import {Point} from './../geometry/Point.js';
-import {Cell} from './Cell.js';
+import {Options} from './../maze/Options.js';
 
 const SCAN_CELL = 0,
     SCAN_WALL = 1;
@@ -10,12 +10,14 @@ const SCAN_CELL = 0,
  */
 export class Scanner {
     /**
-     * @param {Canvas} canvas
-     * @param {Options} options
+     * @param {CanvasPixelArray} imageData
+     * @param {{width: number, height: number}} canvasSize
+     * @param {Object} options
      */
-    constructor(canvas, options) {
-        this.canvas = canvas;
-        this.options = options;
+    constructor(imageData, canvasSize, options) {
+        this.imageData = imageData;
+        this.canvasSize = canvasSize;
+        this.options = new Options(options);
     }
 
     /**
@@ -23,15 +25,16 @@ export class Scanner {
      * @returns {boolean}
      */
     isWall(point) {
-        let data = this.canvas.getImageData(point, this.options.get('mazewall'), this.options.get('mazewall'));
+        for (let column = point.x; column < (point.x + this.options.get('mazewall')); column += 1) {
+            for (let row = point.y; row < (point.y + this.options.get('mazewall')); row += 1) {
+                let index = (row * (this.canvasSize.width * 4 )) + (column * 4),
+                    red = this.imageData[index],
+                    green = this.imageData[index + 1],
+                    blue = this.imageData[index + 2];
 
-        for (let i = 0, n = data.length; i < n; i += 4) {
-            let red = data[i],
-                green = data[i + 1],
-                blue = data[i + 2];
-
-            if (this.options.get('wallr') !== red || this.options.get('wallg') !== green || this.options.get('wallb') !== blue) {
-                return false;
+                if (this.options.get('wallr') !== red || this.options.get('wallg') !== green || this.options.get('wallb') !== blue) {
+                    return false;
+                }
             }
         }
 
@@ -46,21 +49,21 @@ export class Scanner {
             yScanMode = SCAN_CELL,
             matrix = new Matrix();
 
-        while (y < this.canvas.getHeight()) {
+        while (y < this.canvasSize.height) {
             let x = 0,
                 height = (yScanMode === SCAN_CELL ? this.options.get('mazecell') : this.options.get('mazewall')),
                 xScanMode = SCAN_CELL;
 
-            while (x < this.canvas.getWidth()) {
+            while (x < this.canvasSize.width) {
                 let width = (xScanMode === SCAN_CELL ? this.options.get('mazecell') : this.options.get('mazewall')),
                     position = new Point(x, y);
 
-                matrix.add(x, y, new Cell(
+                matrix.add(x, y, {
                     position,
                     width,
                     height,
-                    this.isWall(position)
-                ));
+                    isWall: this.isWall(position)
+                });
 
                 x += width;
 
