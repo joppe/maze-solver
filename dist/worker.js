@@ -39,11 +39,10 @@ getInstance = (function (context) {
                     if (modules[1][className].prototype instanceof modules[0].Workable) {
                         Class = modules[1][className];
 
-                        // [1]
                         args.unshift(null);
 
                         /** @var {Workable} worker */
-                        worker = new (Function.bind.apply(Class, args))();
+                        worker = new (Function.bind.apply(Class, args))(); // [1]
                         worker.onPostMessage(function (message) {
                             context.postMessage(message);
                         });
