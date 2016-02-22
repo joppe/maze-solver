@@ -12,12 +12,12 @@ export class Scanner {
     /**
      * @param {CanvasPixelArray} imageData
      * @param {{width: number, height: number}} canvasSize
-     * @param {Object} options
+     * @param {Options} options
      */
     constructor(imageData, canvasSize, options) {
         this.imageData = imageData;
         this.canvasSize = canvasSize;
-        this.options = new Options(options);
+        this.options = options;
     }
 
     /**
