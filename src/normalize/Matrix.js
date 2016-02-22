@@ -114,4 +114,20 @@ export class Matrix {
 
         return str;
     }
+
+    /**
+     * @param {Object} data
+     * @returns {Matrix}
+     */
+    static createFromRaw(data) {
+        let matrix = new Matrix();
+
+        matrix.cells = data.cells;
+        matrix.rowCount = data.rowCount;
+        matrix.columnCount = data.columnCount;
+        matrix.columns = data.columns;
+        matrix.rows = data.rows;
+
+        return matrix;
+    }
 }
