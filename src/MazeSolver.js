@@ -2,9 +2,12 @@ import {Options} from './maze/Options.js';
 import {MazeImage} from './maze/MazeImage.js';
 import {Canvas} from './dom/Canvas.js';
 import {Scanner} from './normalize/Scanner.js';
+import {Matrix} from './normalize/Matrix.js';
 import {Solver} from './solve/Solver.js';
 import {Point} from './geometry/Point.js';
 import {Manager as TimerManager} from './timer/Manager.js';
+import {REQUEST_TYPE_SCAN} from './normalize/Worker.js';
+import {REQUEST_TYPE_SIMPLE} from './solve/Worker.js';
 
 /**
  * @class MazeSolver
@@ -20,12 +23,9 @@ class MazeSolver {
             TimerManager.end('fetch-image');
 
             let canvas = new Canvas(image.getWidth(), image.getHeight()),
-                scanner,
-                matrix,
                 normalized = new Canvas(image.getWidth(), image.getHeight()),
                 solution = new Canvas(image.getWidth(), image.getHeight()),
-                solver,
-                path;
+                scannerWorker;
 
             image.appendTo(document.body);
             canvas.appendTo(document.body);
@@ -34,30 +34,64 @@ class MazeSolver {
 
             canvas.drawImage(image.getElement(), new Point(0, 0));
 
-            scanner = new Scanner(canvas.getImageData(new Point(0, 0), canvas.getWidth(), canvas.getHeight()), {
-                width: canvas.getWidth(),
-                height: canvas.getHeight()
-            }, options);
-            TimerManager.start('scan');
-            matrix = scanner.scan();
-            TimerManager.end('scan');
+            TimerManager.start('scan-worker');
+            scannerWorker = new Worker('dist/worker.js');
+            scannerWorker.addEventListener('message', (event) => {
+                TimerManager.end('scan-worker');
 
+                let raw = event.data.data.matrix,
+                    matrix = Matrix.createFromRaw(raw),
+                    solveWorker;
+
+                for (let [x, y, cell] of matrix.getIterator()) {
+                    normalized.drawRectangle(new Point(x, y), 1, 1, cell.isWall ? 'black' : 'white');
+                }
+
+                solveWorker = new Worker('dist/worker.js');
+                solveWorker.addEventListener('message', (event) => {
+                    console.log('solved', event);
+                });
+                solveWorker.postMessage({
+                    file: './solve/Worker.js',
+                    className: 'Worker',
+                    args: [],
+                    message: {
+                        type: REQUEST_TYPE_SIMPLE,
+                        data: {
+                            matrix: raw
+                        }
+                    }
+                })
+            }, false);
+            scannerWorker.postMessage({
+                file: './normalize/Worker.js',
+                className: 'Worker',
+                args: [],
+                message: {
+                    type: REQUEST_TYPE_SCAN,
+                    data: {
+                        imageData: canvas.getImageData(new Point(0, 0), canvas.getWidth(), canvas.getHeight()),
+                        canvasSize: {
+                            width: canvas.getWidth(),
+                            height: canvas.getHeight()
+                        },
+                        options: options.raw()
+                    }
+                }
+            });
+            /*/
             for (let [col, row, value] of matrix.getIterator()) {
                 console.log(col, row, value.isWall);
             }
+            /**/
 
-            // Display timers
+            /*/ Display timers
             for (let [id, timer] of TimerManager) {
                 console.log(id, timer.getDuration());
             }
+            /**/
 
             /*/
-            matrix = scanner.scan();
-
-            matrix.iterate((x, y, cell) => {
-                normalized.drawRectangle(new Point(x, y), 1, 1, cell.isWall ? 'black' : 'white');
-            });
-
             solver = new Solver(matrix);
             path = solver.simple();
 

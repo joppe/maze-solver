@@ -7,7 +7,7 @@ export class Path {
     }
 
     /**
-     * @param {Cell} cell
+     * @param {Object} cell
      * @returns {Path}
      */
     add(cell) {
@@ -17,22 +17,18 @@ export class Path {
     }
 
     /**
-     * @param {Function} callback
+     * @returns {Object}
      */
-    iterate(callback) {
-        this.points.forEach(callback);
+    * getIterator() {
+        for (let cell of this.points) {
+            yield cell;
+        }
     }
 
     /**
-     * @returns {string}
+     * @returns {Array}
      */
-    toString() {
-        let str = '';
-
-        this.points.forEach((cell) => {
-            str += cell.toString() + "\n";
-        });
-
-        return str;
+    raw() {
+        return this.points;
     }
 }
