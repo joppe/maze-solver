@@ -1,7 +1,8 @@
 importScripts(
     'vendor/es6-module-loader/dist/es6-module-loader.js',
     'vendor/system.js/dist/system.js',
-    'system.conf.js'
+    'system.conf.js',
+    '../node_modules/babel-polyfill/dist/polyfill.js'
 );
 
 /**
@@ -22,19 +23,18 @@ var getInstance;
 getInstance = (function (context) {
     'use strict';
 
-    var pool = {};
+    var worker;
 
     return function (file, className, args) {
         return new Promise(function (resolve, reject) {
-            if (undefined !== pool[file]) {
-                resolve(pool[file]);
+            if (undefined !== worker) {
+                resolve(worker);
             } else {
                 Promise.all([
                     System.import('./webworkers/Workable.js'),
                     System.import(file)
                 ]).then(function (modules) {
-                    var Class,
-                        worker;
+                    var Class;
 
                     if (modules[1][className].prototype instanceof modules[0].Workable) {
                         Class = modules[1][className];
@@ -47,9 +47,7 @@ getInstance = (function (context) {
                             context.postMessage(message);
                         });
 
-                        pool[file] = worker;
-
-                        resolve(pool[file]);
+                        resolve(worker);
                     } else {
                         reject('Module name "' + className + '" does not implement Workable');
                     }
