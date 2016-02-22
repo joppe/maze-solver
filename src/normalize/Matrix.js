@@ -116,6 +116,19 @@ export class Matrix {
     }
 
     /**
+     * @returns {{cells: Object, rowCount: number, columnCount: number, columns: Object, rows: Object}}
+     */
+    raw() {
+        return {
+            cells: this.cells,
+            rowCount: this.rowCount,
+            columnCount: this.columnCount,
+            columns: this.columns,
+            rows: this.rows
+        };
+    }
+
+    /**
      * @param {Object} data
      * @returns {Matrix}
      */
