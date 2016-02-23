@@ -7,11 +7,11 @@ export class Path {
     }
 
     /**
-     * @param {Object} cell
+     * @param {Object} point
      * @returns {Path}
      */
-    add(cell) {
-        this.points.push(cell);
+    add(point) {
+        this.points.push(point);
 
         return this;
     }
@@ -20,8 +20,8 @@ export class Path {
      * @returns {Object}
      */
     * getIterator() {
-        for (let cell of this.points) {
-            yield cell;
+        for (let point of this.points) {
+            yield point;
         }
     }
 
