@@ -9,6 +9,15 @@ import {Path} from './solve/Path.js';
 import {Manager as TimerManager} from './timer/Manager.js';
 import {REQUEST_TYPE_SCAN} from './normalize/Worker.js';
 import {REQUEST_TYPE_SIMPLE,RESPONSE_TYPE_SOLVED} from './solve/Worker.js';
+import {normalize} from './solve/Normalize.js';
+
+/**
+ * get image
+ * draw image
+ * scan image (normalize)
+ * solve
+ * draw solution
+ */
 
 /**
  * @class MazeSolver
@@ -54,12 +63,17 @@ class MazeSolver {
                     TimerManager.end('solve-worker');
 
                     if (RESPONSE_TYPE_SOLVED === event.data.type) {
-                        let path = Path.createFromRaw(event.data.data.path);
+                        let path = Path.createFromRaw(event.data.data.path),
+                            normalized = normalize(path);
 
                         solution.drawImage(image.getElement(), new Point(0, 0));
 
-                        for (let point of path.getIterator()) {
+                        for (let [i, point] of path.getIterator()) {
                             solution.drawRectangle(point.position, point.width, point.height, 'green');
+                        }
+
+                        for (let [i, point] of normalized.getIterator()) {
+                            solution.drawRectangle(point.position, point.width, point.height, 'red');
                         }
                     } else {
                         console.log('not solved');

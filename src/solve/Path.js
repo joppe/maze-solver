@@ -17,11 +17,11 @@ export class Path {
     }
 
     /**
-     * @returns {Object}
+     * @returns {Array}
      */
     * getIterator() {
-        for (let point of this.points) {
-            yield point;
+        for (let i = 0; i < this.points.length; i += 1) {
+            yield [i, this.points[i]];
         }
     }
 
