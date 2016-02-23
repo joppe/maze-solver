@@ -3,7 +3,8 @@ import {Response} from './../webworkers/Response.js';
 import {Solver} from './Solver.js';
 import {Matrix} from './../normalize/Matrix.js';
 
-const REQUEST_TYPE_SIMPLE = 1;
+const REQUEST_TYPE_SIMPLE = 2,
+    RESPONSE_TYPE_SOLVED = 2;
 
 /**
  * @class Worker
@@ -20,9 +21,9 @@ export class Worker extends Workable {
 
             this.postMessage(new Response({
                 path: path.raw()
-            }));
+            }, RESPONSE_TYPE_SOLVED));
         }
     }
 }
 
-export {REQUEST_TYPE_SIMPLE}
+export {REQUEST_TYPE_SIMPLE, RESPONSE_TYPE_SOLVED}

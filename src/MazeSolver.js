@@ -5,9 +5,10 @@ import {Scanner} from './normalize/Scanner.js';
 import {Matrix} from './normalize/Matrix.js';
 import {Solver} from './solve/Solver.js';
 import {Point} from './geometry/Point.js';
+import {Path} from './solve/Path.js';
 import {Manager as TimerManager} from './timer/Manager.js';
 import {REQUEST_TYPE_SCAN} from './normalize/Worker.js';
-import {REQUEST_TYPE_SIMPLE} from './solve/Worker.js';
+import {REQUEST_TYPE_SIMPLE,RESPONSE_TYPE_SOLVED} from './solve/Worker.js';
 
 /**
  * @class MazeSolver
@@ -47,9 +48,26 @@ class MazeSolver {
                     normalized.drawRectangle(new Point(x, y), 1, 1, cell.isWall ? 'black' : 'white');
                 }
 
+                TimerManager.start('solve-worker');
                 solveWorker = new Worker('dist/worker.js');
                 solveWorker.addEventListener('message', (event) => {
-                    console.log('solved', event);
+                    TimerManager.end('solve-worker');
+
+                    if (RESPONSE_TYPE_SOLVED === event.data.type) {
+                        let path = Path.createFromRaw(event.data.data.path);
+
+                        solution.drawImage(image.getElement(), new Point(0, 0));
+
+                        for (let point of path.getIterator()) {
+                            solution.drawRectangle(point.position, point.width, point.height, 'green');
+                        }
+                    } else {
+                        console.log('not solved');
+                    }
+
+                    for (let [id, timer] of TimerManager) {
+                        console.log(id, timer.getDuration());
+                    }
                 });
                 solveWorker.postMessage({
                     file: './solve/Worker.js',
@@ -79,32 +97,8 @@ class MazeSolver {
                     }
                 }
             });
-            /*/
-            for (let [col, row, value] of matrix.getIterator()) {
-                console.log(col, row, value.isWall);
-            }
-            /**/
-
-            /*/ Display timers
-            for (let [id, timer] of TimerManager) {
-                console.log(id, timer.getDuration());
-            }
-            /**/
-
-            /*/
-            solver = new Solver(matrix);
-            path = solver.simple();
-
-            solution.drawImage(image.getElement(), new Point(0, 0));
-            path.iterate((cell) => {
-                solution.drawRectangle(cell.position, cell.width, cell.height, 'green');
-            });
-            /**/
         });
     }
 }
 
-MazeSolver.solve(new Options({
-    mazewidth: 5,
-    mazehight: 5
-}));
+MazeSolver.solve(new Options({}));

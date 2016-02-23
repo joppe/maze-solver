@@ -31,4 +31,16 @@ export class Path {
     raw() {
         return this.points;
     }
+
+    /**
+     * @param {Array} points
+     * @returns {Path}
+     */
+    static createFromRaw(points) {
+        let path = new Path();
+
+        path.points = points;
+
+        return path;
+    }
 }
