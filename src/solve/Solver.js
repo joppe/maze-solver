@@ -115,4 +115,48 @@ export class Solver {
 
         return path;
     }
+
+    /**
+     * @returns {Path}
+     */
+    multi() {
+        let angles = [90, 0, -90, -180],
+            path = new Path(),
+            position = this.start,
+            direction = this.direction,
+            wasInside = false;
+
+        while (false === wasInside || (true === wasInside && false === this.isOutside(position))) {
+            if (false === wasInside && this.isInside(position)) {
+                wasInside = true;
+            }
+
+            if (this.isJunction(position, direction)) {
+                break;
+            }
+
+            angles.every((angle) => {
+                let ret = true,
+                    tryDirection = direction.rotate(angle),
+                    tryPosition = position.add(new Point(tryDirection.x, tryDirection.y));
+
+                if (this.isPath(tryPosition)) {
+                    direction = tryDirection;
+                    position = tryPosition;
+
+                    path.add(this.matrix.get(position.x, position.y));
+
+                    ret = false;
+                }
+
+                return ret;
+            });
+        }
+
+        if (wasInside && this.isOutside(position)) {
+            path.isComplete = true;
+        }
+
+        return path;
+    }
 }
