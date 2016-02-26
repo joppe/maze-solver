@@ -41,6 +41,19 @@ export class Path {
     }
 
     /**
+     * @returns {Path}
+     */
+    copy() {
+        let path = new Path([], this.isComplete);
+
+        for (let point of this.getIterator()) {
+            path.add(point.copy());
+        }
+
+        return path;
+    }
+
+    /**
      * @param {Object} raw
      * @returns {Path}
      */
