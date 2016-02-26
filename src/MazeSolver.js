@@ -5,6 +5,7 @@ import {Scanner} from './normalize/Scanner.js';
 import {Matrix} from './normalize/Matrix.js';
 import {Solver} from './solve/Solver.js';
 import {Point} from './geometry/Point.js';
+import {Vector} from './geometry/Vector.js';
 import {Path} from './solve/Path.js';
 import {Manager as TimerManager} from './timer/Manager.js';
 import {REQUEST_TYPE_SCAN} from './normalize/Worker.js';
@@ -40,7 +41,8 @@ class MazeSolver {
         this.canvas.appendTo(document.body);
 
         scanner.then((rawMatrix) => {
-            let solver = this.solve(rawMatrix);
+            let matrix = Matrix.createFromRaw(rawMatrix),
+                solver = this.solve(matrix, new Point(1, 0), new Vector(1, 0));
 
             this.drawNormalized(rawMatrix);
 
@@ -62,7 +64,7 @@ class MazeSolver {
         });
     }
 
-    solve(rawMatrix) {
+    solve(matrix, start, direction) {
         return new Promise((resolve) => {
             let solver = new Worker('dist/worker.js');
 
@@ -76,7 +78,9 @@ class MazeSolver {
                 message: {
                     type: REQUEST_TYPE_SIMPLE,
                     data: {
-                        matrix: rawMatrix // add start and direction
+                        matrix: matrix.raw(),
+                        start: start.raw(),
+                        direction: direction.raw()
                     }
                 }
             })

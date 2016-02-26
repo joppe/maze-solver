@@ -8,9 +8,13 @@ import {Path} from './Path.js';
 export class Solver {
     /**
      * @param {Matrix} matrix
+     * @param {Point} start
+     * @param {Vector} direction
      */
-    constructor(matrix) {
+    constructor(matrix, start, direction) {
         this.matrix = matrix;
+        this.start = start;
+        this.direction = direction;
     }
 
     /**
@@ -59,8 +63,8 @@ export class Solver {
     simple() {
         let angles = [90, 0, -90, -180],
             path = new Path(),
-            position = new Point(1, 0),
-            direction = new Vector(1, 0),
+            position = this.start,
+            direction = this.direction,
             wasInside = false;
 
         while (false === wasInside || (true === wasInside && false === this.isOutside(position))) {
