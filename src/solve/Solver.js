@@ -58,6 +58,27 @@ export class Solver {
     }
 
     /**
+     * @param {Point} position
+     * @param {Vector} direction
+     * @returns {boolean}
+     */
+    isJunction(position, direction) {
+        let angles = [90, 0, -90],
+            supportedAngles = 0;
+
+        angles.forEach((angle) => {
+            let tryDirection = direction.rotate(angle),
+                tryPosition = position.add(new Point(tryDirection.x, tryDirection.y));
+
+            if (this.isPath(tryPosition)) {
+                supportedAngles += 1;
+            }
+        });
+
+        return 1 < supportedAngles;
+    }
+
+    /**
      * @returns {Path}
      */
     simple() {
