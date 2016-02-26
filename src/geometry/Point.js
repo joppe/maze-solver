@@ -32,4 +32,22 @@ export class Point {
     toString() {
         return `x: ${this.x}; y: ${this.y}`;
     }
+
+    /**
+     * @returns {{x: (number|*), y: (number|*)}}
+     */
+    raw() {
+        return {
+            x: this.x,
+            y: this.y
+        };
+    }
+
+    /**
+     * @param {Object} raw
+     * @returns {Point}
+     */
+    static createFromRaw(raw) {
+        return new Point(raw.x, raw.y);
+    }
 }

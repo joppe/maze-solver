@@ -65,6 +65,24 @@ export class Vector {
     toString() {
         return `size: ${this.size}; degrees: ${this.degrees}; radians: ${degreesToRadians(this.degrees)}`;
     }
+
+    /**
+     * @returns {{size: (number|*), degrees: (number|*)}}
+     */
+    raw() {
+        return {
+            size: this.size,
+            degrees: this.degrees
+        };
+    }
+
+    /**
+     * @param {Object} raw
+     * @returns {Vector}
+     */
+    static createFromRaw(raw) {
+        return new Vector(raw.size, raw.degrees);
+    }
 }
 
 export {degreesToRadians, radiansToDegrees}
