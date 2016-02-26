@@ -24,95 +24,148 @@ import {normalize} from './solve/Normalize.js';
  */
 class MazeSolver {
     /**
-     * @param {Object} options
+     * @param {MazeImage} image
+     * @param {Options} options
      */
-    static solve(options) {
-        TimerManager.start('fetch-image');
+    constructor(image, options) {
+        this.image = image;
+        this.options = options;
 
-        MazeImage.fetch(options).then((image) => {
-            TimerManager.end('fetch-image');
+        this.canvas = this.createCanvas();
+    }
 
-            let canvas = new Canvas(image.getWidth(), image.getHeight()),
-                normalized = new Canvas(image.getWidth(), image.getHeight()),
-                solution = new Canvas(image.getWidth(), image.getHeight()),
-                scannerWorker;
+    simple() {
+        let scanner = this.scan();
 
-            image.appendTo(document.body);
-            canvas.appendTo(document.body);
-            normalized.appendTo(document.body);
-            solution.appendTo(document.body);
+        this.canvas.appendTo(document.body);
 
-            canvas.drawImage(image.getElement(), new Point(0, 0));
+        scanner.then((rawMatrix) => {
+            let solver = this.solve(rawMatrix);
 
-            TimerManager.start('scan-worker');
-            scannerWorker = new Worker('dist/worker.js');
-            scannerWorker.addEventListener('message', (event) => {
-                TimerManager.end('scan-worker');
+            this.drawNormalized(rawMatrix);
 
-                let raw = event.data.data.matrix,
-                    matrix = Matrix.createFromRaw(raw),
-                    solveWorker;
+            solver.then((data) => {
+                if (RESPONSE_TYPE_SOLVED === data.type) {
+                    let path = Path.createFromRaw(data.data.path),
+                        normalized = normalize(path),
+                        solution = new Canvas(this.image.getWidth(), this.image.getHeight());
 
-                for (let [x, y, cell] of matrix.getIterator()) {
-                    normalized.drawRectangle(new Point(x, y), 1, 1, cell.isWall ? 'black' : 'white');
+                    solution.drawImage(this.image.getElement(), new Point(0, 0));
+                    solution.appendTo(document.body);
+
+                    this.drawPath(path, solution, 'green');
+                    this.drawPath(normalized, solution, 'red');
+                } else {
+                    console.log('not solved');
                 }
+            });
+        });
+    }
 
-                TimerManager.start('solve-worker');
-                solveWorker = new Worker('dist/worker.js');
-                solveWorker.addEventListener('message', (event) => {
-                    TimerManager.end('solve-worker');
+    solve(rawMatrix) {
+        return new Promise((resolve) => {
+            let solver = new Worker('dist/worker.js');
 
-                    if (RESPONSE_TYPE_SOLVED === event.data.type) {
-                        let path = Path.createFromRaw(event.data.data.path),
-                            normalized = normalize(path);
-
-                        solution.drawImage(image.getElement(), new Point(0, 0));
-
-                        for (let [i, point] of path.getIterator()) {
-                            solution.drawRectangle(point.position, point.width, point.height, 'green');
-                        }
-
-                        for (let [i, point] of normalized.getIterator()) {
-                            solution.drawRectangle(point.position, point.width, point.height, 'red');
-                        }
-                    } else {
-                        console.log('not solved');
+            solver.addEventListener('message', (event) => {
+                resolve(event.data);
+            });
+            solver.postMessage({
+                file: './solve/Worker.js',
+                className: 'Worker',
+                args: [],
+                message: {
+                    type: REQUEST_TYPE_SIMPLE,
+                    data: {
+                        matrix: rawMatrix // add start and direction
                     }
+                }
+            })
+        });
+    }
 
-                    for (let [id, timer] of TimerManager) {
-                        console.log(id, timer.getDuration());
-                    }
-                });
-                solveWorker.postMessage({
-                    file: './solve/Worker.js',
-                    className: 'Worker',
-                    args: [],
-                    message: {
-                        type: REQUEST_TYPE_SIMPLE,
-                        data: {
-                            matrix: raw
-                        }
-                    }
-                })
-            }, false);
-            scannerWorker.postMessage({
+    /**
+     * @returns {Promise}
+     */
+    scan() {
+        return new Promise((resolve) => {
+            let scanner = new Worker('dist/worker.js');
+
+            scanner.addEventListener('message', (event) => {
+                resolve(event.data.data.matrix);
+            });
+            scanner.postMessage({
                 file: './normalize/Worker.js',
                 className: 'Worker',
                 args: [],
                 message: {
                     type: REQUEST_TYPE_SCAN,
                     data: {
-                        imageData: canvas.getImageData(new Point(0, 0), canvas.getWidth(), canvas.getHeight()),
+                        imageData: this.canvas.getImageData(new Point(0, 0), this.canvas.getWidth(), this.canvas.getHeight()),
                         canvasSize: {
-                            width: canvas.getWidth(),
-                            height: canvas.getHeight()
+                            width: this.canvas.getWidth(),
+                            height: this.canvas.getHeight()
                         },
-                        options: options.raw()
+                        options: this.options.raw()
                     }
                 }
             });
         });
     }
+
+    /**
+     * @param {Object} raw
+     */
+    drawNormalized(raw) {
+        let canvas = new Canvas(this.image.getWidth(), this.image.getHeight()),
+            matrix = Matrix.createFromRaw(raw);
+
+        for (let [x, y, cell] of matrix.getIterator()) {
+            canvas.drawRectangle(new Point(x, y), 1, 1, cell.isWall ? 'black' : 'white');
+        }
+
+        canvas.appendTo(document.body);
+    }
+
+    /**
+     * @param {Path} path
+     * @param {Canvas} canvas
+     * @param {string} color
+     */
+    drawPath(path, canvas, color) {
+        for (let [i, point] of path.getIterator()) {
+            canvas.drawRectangle(point.position, point.width, point.height, color);
+        }
+    }
+
+    /**
+     * @returns {Canvas}
+     */
+    createCanvas() {
+        let canvas = new Canvas(this.image.getWidth(), this.image.getHeight());
+
+        canvas.drawImage(this.image.getElement(), new Point(0, 0));
+
+        return canvas;
+
+    }
+
+    /**
+     * @param {Options} options
+     * @returns {Promise}
+     */
+    static create(options) {
+        return new Promise((resolve, reject) => {
+            MazeImage.fetch(options).then((image) => {
+                resolve(new MazeSolver(image, options));
+            }).catch(reject);
+        });
+    }
 }
 
-MazeSolver.solve(new Options({}));
+export function solveMazeSimple(options = {}) {
+    MazeSolver.create(new Options(options)).then((solver) => {
+        solver.simple();
+    });
+}
+
+solveMazeSimple({});
