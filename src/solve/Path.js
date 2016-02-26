@@ -2,8 +2,13 @@
  * @class Path
  */
 export class Path {
-    constructor() {
-        this.points = [];
+    /**
+     * @param {Array} points
+     * @param {boolean} isComplete
+     */
+    constructor(points = [], isComplete = false) {
+        this.points = points;
+        this.isComplete = isComplete;
     }
 
     /**
@@ -26,21 +31,20 @@ export class Path {
     }
 
     /**
-     * @returns {Array}
+     * @returns {{points: Array, isComplete: (boolean|*)}}
      */
     raw() {
-        return this.points;
+        return {
+            points: this.points,
+            isComplete: this.isComplete
+        };
     }
 
     /**
-     * @param {Array} points
+     * @param {Object} raw
      * @returns {Path}
      */
-    static createFromRaw(points) {
-        let path = new Path();
-
-        path.points = points;
-
-        return path;
+    static createFromRaw(raw) {
+        return new Path(raw.points, raw.isComplete);
     }
 }
