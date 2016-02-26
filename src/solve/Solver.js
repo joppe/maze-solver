@@ -111,6 +111,8 @@ export class Solver {
             });
         }
 
+        path.isComplete = true;
+
         return path;
     }
 }
