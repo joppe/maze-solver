@@ -18,7 +18,11 @@ babel-watch:
 	@echo "Transpile javascript & watch for changes"
 	$(PWD)/node_modules/babel/bin/babel.js src --stage 1 --out-dir dist --modules system  --watch
 
-setup: npm bower babel
+persmissions:
+	@echo "The images directory must be writable for the script"
+	@chmod -R 777 images
+
+setup: npm bower babel persmissions
 
 clean:
 	@echo "Cleanup installed files"
