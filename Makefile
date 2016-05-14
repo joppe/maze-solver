@@ -23,4 +23,4 @@ setup: npm bower babel
 clean:
 	@echo "Cleanup installed files"
 	@rm -rf node_modules
-	@cd dist && ls | grep -v .gitkeep | xargs rm -rf
+	@cd dist && ls | grep -v .gitkeep | grep -v system.conf.js | grep -v worker.js | xargs rm -rf
