@@ -8,7 +8,7 @@ npm:
 
 bower:
 	@echo "Install bower packages"
-	bower install
+	$(PWD)/node_modules/bower/bin/bower install
 
 babel:
 	@echo "Transpile javascript"
