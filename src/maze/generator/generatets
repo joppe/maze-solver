@@ -1,0 +1,142 @@
+import { random as randomArray } from 'app/array/random';
+import { shuffle } from 'app/array/shuffle';
+import { Vector } from 'app/geometry/Vector';
+import { ICell } from 'app/grid/ICell';
+import { Grid } from 'app/grid/Matrix';
+import { CellType } from 'app/maze/CellType';
+import { random as randomNumber } from 'app/number/random';
+import { IHash } from 'app/object/IHash';
+
+export function getRandomDirection(): Vector {
+    const x: number = randomArray([-1, 0, 1]);
+    const y: number = x === 0 ? randomArray([-1, 1]) : 0;
+
+    return new Vector(x, y);
+}
+
+export function getRandomStartCell(direction: Vector, matrix: Grid<CellType>): ICell<CellType> {
+    let row: number;
+    let col: number;
+
+    if (direction.x === 0) { // vertical movement
+        col = randomNumber(1, matrix.cols - 2);
+
+        if (direction.y === 1) { // move down
+            row = 0;
+        } else if (direction.y === -1) { // move up
+            row = matrix.rows - 1;
+        }
+    } else if (direction.y === 0) { // horizontal movement
+        row = randomNumber(1, matrix.rows - 2);
+
+        if (direction.x === 1) { // move right
+            col = 0;
+        } else if (direction.x === -1) { // move left
+            col = matrix.cols - 1;
+        }
+    }
+
+    return matrix.getCell(row, col);
+}
+
+export function getRandomEndCell(startCell: ICell<CellType>, matrix: Grid<CellType>): ICell<CellType> {
+    return startCell;
+}
+
+export function getNextCell(currentCell: ICell<CellType>, direction: Vector, matrix: Grid<CellType>): ICell<CellType> | undefined {
+    const row: number = currentCell.row + direction.y;
+    const col: number = currentCell.col + direction.x;
+
+    if (matrix.isValidIndex(row, col)) {
+        return matrix.getCell(row, col);
+    }
+}
+
+export interface IPossibility {
+    cell: ICell<CellType>;
+    direction: Vector;
+}
+
+export function canBePath(currentCell: ICell<CellType>, currentDirection: Vector, matrix: Grid<CellType>): boolean {
+    const angles: number[] = [90, 0, -90];
+
+    return angles.every((angle: number): boolean => {
+        const direction: Vector = currentDirection.rotate(angle);
+        const neighbour: ICell<CellType> | undefined = getNextCell(currentCell, direction, matrix);
+        // console.log(neighbour);
+        return neighbour !== undefined && neighbour.value !== CellType.Path;
+    });
+}
+
+export function getPossibleCells(currentCell: ICell<CellType>, currentDirection: Vector, matrix: Grid<CellType>): IPossibility[] {
+    const angles: number[] = [90, 0, -90];
+    const possibilities: IPossibility[] = [];
+
+    angles.forEach((angle: number): void => {
+        const direction: Vector = currentDirection.rotate(angle);
+        const nextCell: ICell<CellType> | undefined = getNextCell(currentCell, direction, matrix);
+
+        if (nextCell !== undefined && nextCell.value === CellType.UnSet) {
+            possibilities.push({
+                cell: nextCell,
+                direction
+            });
+        }
+    });
+
+    return possibilities;
+}
+
+/**
+ * Create a matrix with walls on the outside.
+ */
+export function createMatrix(rows: number, cols: number): Grid<CellType> {
+    const matrix: Grid<CellType> = new Grid<CellType>(rows, cols, CellType.UnSet);
+    const walls: IHash<IterableIterator<ICell<CellType>>> = {
+        bottom: matrix.getRow(matrix.rows - 1),
+        left: matrix.getCol(0),
+        right: matrix.getCol(matrix.cols - 1),
+        top: matrix.getRow(0)
+    };
+
+    Object.keys(walls).forEach((side: string): void => {
+        for (const cell of walls[side]) {
+            cell.value = CellType.Wall;
+        }
+    });
+
+    return matrix;
+}
+
+export function createPath(cell: ICell<CellType>, direction: Vector, matrix: Grid<CellType>): void {
+    const possibilities: IPossibility[] = shuffle(getPossibleCells(cell, direction, matrix));
+
+    possibilities.forEach((possibility: IPossibility): void => {
+        if (canBePath(possibility.cell, possibility.direction, matrix)) {
+            possibility.cell.value = CellType.Path;
+
+            createPath(possibility.cell, possibility.direction, matrix);
+        }
+    });
+}
+
+/**
+ * Depth first solution
+ * The trick is when generating a maze calculate the possible directions and always follow those directions.
+ *
+ * First get random direction
+ * Then get random point that is logical for that direction
+ * Get a random endpoint at the opposite side of the start point
+ * Start a random path
+ */
+export function generate(rows: number, cols: number): Grid<CellType> {
+    const matrix: Grid<CellType> = createMatrix((rows * 2) + 1, (cols * 2) + 1);
+    const direction: Vector = getRandomDirection();
+    const start: ICell<CellType> = getRandomStartCell(direction, matrix);
+
+    start.value = CellType.Path;
+
+    createPath(start, direction, matrix);
+
+    return matrix;
+}

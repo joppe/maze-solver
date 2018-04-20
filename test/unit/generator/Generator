@@ -1,0 +1,38 @@
+import { CellType } from 'app/app';
+import { Generator } from 'app/maze/generator/Generator';
+import { ICell } from 'app/grid/ICell';
+import { Matrix } from 'app/grid/Matrix';
+
+describe('Generator', (): void => {
+    describe('constructor', (): void => {
+        describe('addBorders', (): void => {
+            it('set the value of all cells on the outside to type wall', (): void => {
+                const generator: Generator = new Generator(5, 5);
+
+                for (let i: number = 0; i < 5; i += 1) {
+                    expect(generator['_matrix'].getCell(0, i).value).toBe(CellType.Wall);
+                    expect(generator['_matrix'].getCell(4, i).value).toBe(CellType.Wall);
+                    expect(generator['_matrix'].getCell(i, 0).value).toBe(CellType.Wall);
+                    expect(generator['_matrix'].getCell(i, 4).value).toBe(CellType.Wall);
+                }
+            });
+        });
+    });
+
+    describe('getStart', (): void => {
+        it('pick a random cell on the outside of the matrix', (): void => {
+            const generator: Generator = new Generator(5, 5);
+
+            for (let i: number = 0; i < 100; i += 1) {
+                const cell: ICell<CellType> = generator.getStart();
+
+                // If the row is not the top or the bottom one, the col must be on the left or right.
+                if (cell.row !== 0 && cell.row !== 4) {
+                    expect([0, 4].indexOf(cell.col)).toBeGreaterThan(-1);
+                } else {
+                    expect([0, 4].indexOf(cell.row)).toBeGreaterThan(-1);
+                }
+            }
+        });
+    });
+});
