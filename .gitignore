@@ -1,7 +1,3 @@
-node_modules
-.idea
-dist/*
-!dist/system.conf.js
-!dist/worker.js
-images/*
-!images/.gitkeep
+.idea/
+node_modules/
+coverage/
