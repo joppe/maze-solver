@@ -1,8 +1,8 @@
 import { ICell } from 'app/grid/ICell';
 import { IPosition } from 'app/grid/IPosition';
 import { CellType } from 'app/maze/CellType';
-import { Maybe } from 'app/monad/Maybe';
 import { equalPosition } from 'app/maze/helper/equalPosition';
+import { Maybe } from 'app/monad/Maybe';
 
 export class Path {
     private _cells: Maybe<ICell<CellType>>[] = [];

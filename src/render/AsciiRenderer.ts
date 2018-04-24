@@ -1,9 +1,9 @@
+import { ICell } from 'app/grid/ICell';
 import { CellType } from 'app/maze/CellType';
 import { Maze } from 'app/maze/Maze';
 import { Path } from 'app/maze/Path';
-import { IRenderer } from 'app/render/IRenderer';
 import { Maybe } from 'app/monad/Maybe';
-import { ICell } from 'app/grid/ICell';
+import { IRenderer } from 'app/render/IRenderer';
 
 // tslint:disable-next-line quotemark
 const NEW_LINE: string = "\n";

@@ -1,10 +1,9 @@
 import { ICell } from 'app/grid/ICell';
-import { IPosition } from 'app/grid/IPosition';
 import { CellType } from 'app/maze/CellType';
 import { Maze } from 'app/maze/Maze';
+import { Path } from 'app/maze/Path';
 import { Maybe } from 'app/monad/Maybe';
 import { IRenderer } from 'app/render/IRenderer';
-import { Path } from 'app/maze/Path';
 
 export interface IOptions {
     pathColor: string;
