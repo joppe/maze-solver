@@ -1,9 +1,7 @@
 import { shuffle } from 'app/array/shuffle';
 import { Vector } from 'app/geometry/Vector';
 import { ICell } from 'app/grid/ICell';
-import { IPosition } from 'app/grid/IPosition';
-import { CellType, isClosedDoor, isDoor, isOpenDoor, isRoom, isUnset } from 'app/maze/CellType';
-import { isInPath } from 'app/maze/helper/isInPath';
+import { CellType, isClosedDoor, isUnset } from 'app/maze/CellType';
 import { startDirection } from 'app/maze/helper/startDirection';
 import { IPossibility } from 'app/maze/IPossibility';
 import { Maze } from 'app/maze/Maze';
@@ -41,21 +39,6 @@ export class Generator {
 
         this.createPath(room, direction, maze);
 
-        /*
-        const path: IPosition[] = this.calculatePath(room, direction, [start.value.position, room.value.position]);
-
-        path.push(end.value.position);
-
-        path.forEach((position: IPosition): void => {
-            const cell: Maybe<ICell<CellType>> = this._maze.getCell(position);
-
-            cell.do((c: ICell<CellType>): void => {
-                if (c.value === CellType.ClosedDoor) {
-                    c.value = CellType.OpenDoor;
-                }
-            });
-        });
-/**/
         return maze;
     }
 
