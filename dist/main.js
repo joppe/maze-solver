@@ -150,7 +150,7 @@ exports.isWallOrDoor = isWallOrDoor;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Vector_1 = __webpack_require__(9);
+const Vector_1 = __webpack_require__(7);
 function startDirection(position, cols, rows) {
     let x = 0;
     let y = 0;
@@ -241,38 +241,20 @@ exports.Maybe = Maybe;
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(4);
-module.exports = __webpack_require__(6);
+module.exports = __webpack_require__(4);
 
 
 /***/ }),
 /* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__main_scss__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__main_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__main_scss__);
-
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const generate_1 = __webpack_require__(7);
-const Solver_1 = __webpack_require__(14);
-const AsciiRenderer_1 = __webpack_require__(17);
-const CanvasRenderer_1 = __webpack_require__(18);
+const generate_1 = __webpack_require__(5);
+const Solver_1 = __webpack_require__(12);
+const AsciiRenderer_1 = __webpack_require__(15);
+const CanvasRenderer_1 = __webpack_require__(16);
 const body = window.document.querySelector('body');
 const maze = generate_1.generate(10, 10);
 const ascii = new AsciiRenderer_1.AsciiRenderer(maze);
@@ -294,17 +276,17 @@ canvas.plot(path);
 
 
 /***/ }),
-/* 7 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const shuffle_1 = __webpack_require__(8);
+const shuffle_1 = __webpack_require__(6);
 const CellType_1 = __webpack_require__(0);
 const startDirection_1 = __webpack_require__(1);
-const Maze_1 = __webpack_require__(11);
-const random_1 = __webpack_require__(13);
+const Maze_1 = __webpack_require__(9);
+const random_1 = __webpack_require__(11);
 function generate(horizontalRooms, verticalRooms) {
     const maze = new Maze_1.Maze((horizontalRooms * 2) + 1, (verticalRooms * 2) + 1);
     const start = maze.getCell({
@@ -338,7 +320,7 @@ exports.generate = generate;
 
 
 /***/ }),
-/* 8 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -360,13 +342,13 @@ exports.shuffle = shuffle;
 
 
 /***/ }),
-/* 9 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const angle_1 = __webpack_require__(10);
+const angle_1 = __webpack_require__(8);
 class Vector {
     get x() {
         return this._x;
@@ -399,7 +381,7 @@ exports.Vector = Vector;
 
 
 /***/ }),
-/* 10 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -416,13 +398,13 @@ exports.radiansToDegrees = radiansToDegrees;
 
 
 /***/ }),
-/* 11 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const Grid_1 = __webpack_require__(12);
+const Grid_1 = __webpack_require__(10);
 const CellType_1 = __webpack_require__(0);
 const Maybe_1 = __webpack_require__(2);
 const ANGLES = [90, 0, -90];
@@ -488,7 +470,7 @@ exports.Maze = Maze;
 
 
 /***/ }),
-/* 12 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -571,7 +553,7 @@ exports.Grid = Grid;
 
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -588,7 +570,7 @@ exports.random = random;
 
 
 /***/ }),
-/* 14 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -596,7 +578,7 @@ exports.random = random;
 Object.defineProperty(exports, "__esModule", { value: true });
 const CellType_1 = __webpack_require__(0);
 const startDirection_1 = __webpack_require__(1);
-const Path_1 = __webpack_require__(15);
+const Path_1 = __webpack_require__(13);
 function findStart(maze) {
     const row = 0;
     for (let col = 0; col < maze.width; col += 1) {
@@ -648,14 +630,14 @@ exports.solve = solve;
 
 
 /***/ }),
-/* 15 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const Maybe_1 = __webpack_require__(2);
-const equalPosition_1 = __webpack_require__(16);
+const equalPosition_1 = __webpack_require__(14);
 class Path {
     constructor() {
         this._cells = [];
@@ -689,7 +671,7 @@ exports.Path = Path;
 
 
 /***/ }),
-/* 16 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -703,7 +685,7 @@ exports.equalPosition = equalPosition;
 
 
 /***/ }),
-/* 17 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -770,7 +752,7 @@ exports.AsciiRenderer = AsciiRenderer;
 
 
 /***/ }),
-/* 18 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

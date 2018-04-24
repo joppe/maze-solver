@@ -9,7 +9,6 @@ const config = {
     },
 
     entry: [
-        './sass/main.jscss',
         './src/main.ts',
     ],
 
@@ -24,44 +23,6 @@ const config = {
                 enforce: 'pre',
                 test: /\.js$/,
                 loader: 'source-map-loader'
-            },
-
-            {
-                test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                sourceMap: true
-                            }
-                        },
-
-                        {
-                            loader: 'postcss-loader',
-                            options: {
-                                plugins: () => {
-                                    return [
-                                        require('autoprefixer')({
-                                            browsers: [
-                                                'last 2 versions',
-                                                'IE >= 9'
-                                            ]
-                                        })
-                                    ];
-                                },
-                                sourceMap: true
-                            }
-                        },
-                        {
-                            loader: 'sass-loader',
-                            options: {
-                                sourceMap: true
-                            }
-                        }
-                    ]
-                })
             }
         ]
     },
@@ -70,11 +31,6 @@ const config = {
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/dist'
     },
-    plugins: [
-        new ExtractTextPlugin({
-            filename: 'main.css'
-        }),
-    ],
     resolve: {
         alias: {
             app: path.resolve(__dirname, 'src')
