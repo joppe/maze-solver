@@ -6,6 +6,8 @@ export enum CellType {
     OpenDoor,
     ClosedDoor,
     Wall,
+    Entrance,
+    Exit,
     Room
 }
 
@@ -54,10 +56,20 @@ export function isDoor(cell: Maybe<ICell<CellType>>): boolean {
     ]);
 }
 
+export function isEntrance(cell: Maybe<ICell<CellType>>): boolean {
+    return isA(cell, CellType.Entrance);
+}
+
+export function isExit(cell: Maybe<ICell<CellType>>): boolean {
+    return isA(cell, CellType.Exit);
+}
+
 export function isWallOrDoor(cell: Maybe<ICell<CellType>>): boolean {
     return isOneOf(cell, [
         CellType.ClosedDoor,
         CellType.OpenDoor,
-        CellType.Wall
+        CellType.Wall,
+        CellType.Entrance,
+        CellType.Exit
     ]);
 }

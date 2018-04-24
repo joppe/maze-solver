@@ -1,8 +1,9 @@
-import { IPosition } from 'app/grid/IPosition';
 import { CellType } from 'app/maze/CellType';
-import { findInPath } from 'app/maze/helper/findInPath';
 import { Maze } from 'app/maze/Maze';
+import { Path } from 'app/maze/Path';
 import { IRenderer } from 'app/render/IRenderer';
+import { Maybe } from 'app/monad/Maybe';
+import { ICell } from 'app/grid/ICell';
 
 // tslint:disable-next-line quotemark
 const NEW_LINE: string = "\n";
@@ -28,12 +29,10 @@ export class AsciiRenderer implements IRenderer {
                 row = cell.position.row;
             }
 
-            if (cell.value === CellType.Wall) {
+            if (cell.value === CellType.ClosedDoor || cell.value === CellType.Wall) {
                 text += '*';
-            } else if (cell.value === CellType.OpenDoor || cell.value === CellType.Room) {
-                text += ' ';
             } else {
-                text += '+';
+                text += ' ';
             }
         }
 
@@ -42,27 +41,41 @@ export class AsciiRenderer implements IRenderer {
         parent.appendChild(this._element);
     }
 
-    plot(path: IPosition[]): void {
-        let text: string = '';
-        let row: number = 0;
+    plot(path: Path): void {
+        let index: number = 0;
 
-        for (const cell of this._maze.getCells()) {
-            const position: IPosition | undefined = findInPath(cell.position, path);
-
-            if (cell.position.row !== row) {
-                text += NEW_LINE;
-                row = cell.position.row;
+        const draw: Function = (): void => {
+            if (index >= path.length) {
+                return;
             }
 
-            if (position !== undefined || cell.value === CellType.OpenDoor || cell.value === CellType.Room) {
-                text += ' ';
-            } else if (cell.value === CellType.Wall) {
-                text += '*';
-            } else {
-                text += '+';
-            }
-        }
+            let text: string = '';
+            let row: number = 0;
 
-        this._element.innerText = text;
+            for (const cell of this._maze.getCells()) {
+                const p: Maybe<ICell<CellType>> = path.findByPosition(cell.position, index);
+
+                if (cell.position.row !== row) {
+                    text += NEW_LINE;
+                    row = cell.position.row;
+                }
+
+                if (p.hasValue()) {
+                    text += '0';
+                } else if (cell.value === CellType.ClosedDoor || cell.value === CellType.Wall) {
+                    text += '*';
+                } else {
+                    text += ' ';
+                }
+            }
+
+            this._element.innerText = text;
+
+            index += 1;
+
+            window.setTimeout(draw, 50);
+        };
+
+        draw();
     }
 }

@@ -4,6 +4,7 @@ import { CellType } from 'app/maze/CellType';
 import { Maze } from 'app/maze/Maze';
 import { Maybe } from 'app/monad/Maybe';
 import { IRenderer } from 'app/render/IRenderer';
+import { Path } from 'app/maze/Path';
 
 export interface IOptions {
     pathColor: string;
@@ -41,10 +42,10 @@ export class CanvasRenderer implements IRenderer {
             const height: number = cell.position.row % 2 === 1 ? this._options.roomHeight : this._options.wallHeight;
             let color: string;
 
-            if (cell.value === CellType.Room || cell.value === CellType.OpenDoor) {
-                color = this._options.roomColor;
-            } else {
+            if (cell.value === CellType.Wall || cell.value === CellType.ClosedDoor) {
                 color = this._options.wallColor;
+            } else {
+                color = this._options.roomColor;
             }
 
             this.drawRectangle(
@@ -59,7 +60,7 @@ export class CanvasRenderer implements IRenderer {
         parent.appendChild(this._canvas);
     }
 
-    plot(path: IPosition[]): void {
+    plot(path: Path): void {
         let index: number = 0;
 
         const draw: Function = (): void => {
@@ -67,8 +68,7 @@ export class CanvasRenderer implements IRenderer {
                 return;
             }
 
-            const position: IPosition = path[index];
-            const m: Maybe<ICell<CellType>> = this._maze.getCell(position);
+            const m: Maybe<ICell<CellType>> = path.get(index);
             const cell: ICell<CellType> = m.value;
             const x: number = this.getX(cell.position.col);
             const y: number = this.getY(cell.position.row);

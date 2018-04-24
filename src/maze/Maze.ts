@@ -22,6 +22,8 @@ import { Maybe } from 'app/monad/Maybe';
  * The maze will be formed by doors that are closed or open.
  */
 
+const ANGLES: number[] = [90, 0, -90];
+
 export class Maze {
     private readonly _width: number;
     private readonly _height: number;
@@ -50,11 +52,10 @@ export class Maze {
         return this._grid.getCells();
     }
 
-    public possiblePositions(cell: Maybe<ICell<CellType>>, direction: Vector): IPossibility[] {
-        const angles: number[] = [90, 0, -90];
+    public getPossibilities(cell: Maybe<ICell<CellType>>, direction: Vector): IPossibility[] {
         const possibilities: IPossibility[] = [];
 
-        angles.forEach((angle: number): void => {
+        ANGLES.forEach((angle: number): void => {
             const nextDirection: Vector = direction.rotate(angle);
             const door: Maybe<ICell<CellType>> = this.nextCell(cell, nextDirection);
             const room: Maybe<ICell<CellType>> = this.nextCell(door, nextDirection);

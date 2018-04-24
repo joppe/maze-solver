@@ -1,14 +1,15 @@
-import { Generator } from 'app/maze/generator/Generator';
+import { generate } from 'app/maze/generator/generate';
 import { Maze } from 'app/maze/Maze';
+import { Path } from 'app/maze/Path';
+import { solve } from 'app/maze/solver/Solver';
 import { AsciiRenderer } from 'app/render/AsciiRenderer';
 import { CanvasRenderer } from 'app/render/CanvasRenderer';
 import { IRenderer } from 'app/render/IRenderer';
 
 const body: HTMLElement = window.document.querySelector('body');
-const generator: Generator = new Generator(10, 10);
-const maze: Maze = generator.generate();
-const a: IRenderer = new AsciiRenderer(maze);
-const c: IRenderer = new CanvasRenderer(maze, {
+const maze: Maze = generate(10, 10);
+const ascii: IRenderer = new AsciiRenderer(maze);
+const canvas: IRenderer = new CanvasRenderer(maze, {
     pathColor: '#f00',
     roomColor: '#fff',
     roomHeight: 30,
@@ -19,5 +20,10 @@ const c: IRenderer = new CanvasRenderer(maze, {
     wallWidth: 5
 });
 
-a.render(body);
-c.render(body);
+ascii.render(body);
+canvas.render(body);
+
+const path: Path = solve(maze);
+
+ascii.plot(path);
+canvas.plot(path);

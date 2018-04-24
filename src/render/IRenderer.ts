@@ -1,7 +1,7 @@
-import { IPosition } from 'app/grid/IPosition';
+import { Path } from 'app/maze/Path';
 
 export interface IRenderer {
     render(parent: HTMLElement): void;
 
-    plot(path: IPosition[]): void;
+    plot(path: Path): void;
 }
