@@ -34,8 +34,7 @@ export class Grid<T> {
                 };
 
                 this._cells[this.createIndex(position)] = {
-                    col,
-                    row,
+                    position,
                     value: valueFactory(position)
                 };
             }

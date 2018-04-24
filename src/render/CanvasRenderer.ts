@@ -1,46 +1,50 @@
-import { Grid } from 'app/grid/Grid';
+import { ICell } from 'app/grid/ICell';
 import { IPosition } from 'app/grid/IPosition';
 import { CellType } from 'app/maze/CellType';
+import { Maze } from 'app/maze/Maze';
+import { Maybe } from 'app/monad/Maybe';
 import { IRenderer } from 'app/render/IRenderer';
 
 export interface IOptions {
-    pathWidth: number;
-    pathHeight: number;
     pathColor: string;
+    roomWidth: number;
+    roomHeight: number;
+    roomColor: string;
+    speed: number;
     wallWidth: number;
     wallHeight: number;
     wallColor: string;
 }
 
 export class CanvasRenderer implements IRenderer {
-    private readonly matrix: Grid<CellType>;
-    private readonly canvas: HTMLCanvasElement;
-    private readonly context: CanvasRenderingContext2D;
-    private readonly options: IOptions;
+    private readonly _maze: Maze;
+    private readonly _canvas: HTMLCanvasElement;
+    private readonly _context: CanvasRenderingContext2D;
+    private readonly _options: IOptions;
 
-    constructor(matrix: Grid<CellType>, options: IOptions) {
-        this.matrix = matrix;
-        this.options = options;
+    constructor(maze: Maze, options: IOptions) {
+        this._maze = maze;
+        this._options = options;
 
-        this.canvas = document.createElement('canvas');
-        this.canvas.setAttribute('width', String(this.getX(this.matrix.cols)));
-        this.canvas.setAttribute('height', String(this.getY(this.matrix.rows)));
+        this._canvas = window.document.createElement('canvas');
+        this._canvas.setAttribute('width', String(this.getX(this._maze.width)));
+        this._canvas.setAttribute('height', String(this.getY(this._maze.height)));
 
-        this.context = this.canvas.getContext('2d');
+        this._context = this._canvas.getContext('2d');
     }
 
     render(parent: HTMLElement): void {
-        for (const cell of this.matrix.getCells()) {
-            const x: number = this.getX(cell.col);
-            const y: number = this.getY(cell.row);
-            const width: number = cell.col % 2 === 0 ? this.options.wallWidth : this.options.pathWidth;
-            const height: number = cell.row % 2 === 0 ? this.options.wallHeight : this.options.pathHeight;
+        for (const cell of this._maze.getCells()) {
+            const x: number = this.getX(cell.position.col);
+            const y: number = this.getY(cell.position.row);
+            const width: number = cell.position.col % 2 === 1 ? this._options.roomWidth : this._options.wallWidth;
+            const height: number = cell.position.row % 2 === 1 ? this._options.roomHeight : this._options.wallHeight;
             let color: string;
 
-            if (this.isPath(cell.row, cell.col) || cell.value === CellType.Wall) {
-                color = this.options.pathColor;
+            if (cell.value === CellType.Room || cell.value === CellType.OpenDoor) {
+                color = this._options.roomColor;
             } else {
-                color = this.options.wallColor;
+                color = this._options.wallColor;
             }
 
             this.drawRectangle(
@@ -52,29 +56,54 @@ export class CanvasRenderer implements IRenderer {
             );
         }
 
-        parent.appendChild(this.canvas);
+        parent.appendChild(this._canvas);
     }
 
     plot(path: IPosition[]): void {
-        // TODO
-    }
+        let index: number = 0;
 
-    private isPath(row: number, col: number): boolean {
-        return row % 2 === 1 && col % 2 === 1;
+        const draw: Function = (): void => {
+            if (index >= path.length) {
+                return;
+            }
+
+            const position: IPosition = path[index];
+            const m: Maybe<ICell<CellType>> = this._maze.getCell(position);
+            const cell: ICell<CellType> = m.value;
+            const x: number = this.getX(cell.position.col);
+            const y: number = this.getY(cell.position.row);
+            const width: number = cell.position.col % 2 === 1 ? this._options.roomWidth : this._options.wallWidth;
+            const height: number = cell.position.row % 2 === 1 ? this._options.roomHeight : this._options.wallHeight;
+            const color: string = this._options.pathColor;
+
+            this.drawRectangle(
+                x,
+                y,
+                width,
+                height,
+                color
+            );
+
+            index += 1;
+
+            window.setTimeout(draw, this._options.speed);
+        };
+
+        draw();
     }
 
     private getX(col: number): number {
         const wallCount: number = this.getWallCount(col);
         const pathCount: number = this.getPathCount(col);
 
-        return (wallCount * this.options.wallWidth) + (pathCount * this.options.pathWidth);
+        return (wallCount * this._options.wallWidth) + (pathCount * this._options.roomWidth);
     }
 
     private getY(row: number): number {
         const wallCount: number = this.getWallCount(row);
         const pathCount: number = this.getPathCount(row);
 
-        return (wallCount * this.options.wallHeight) + (pathCount * this.options.pathHeight);
+        return (wallCount * this._options.wallHeight) + (pathCount * this._options.roomHeight);
     }
 
     private getWallCount(unit: number): number {
@@ -86,9 +115,9 @@ export class CanvasRenderer implements IRenderer {
     }
 
     private drawRectangle(x: number, y: number, width: number, height: number, color: string): void {
-        this.context.beginPath();
-        this.context.rect(x, y, width, height);
-        this.context.fillStyle = color;
-        this.context.fill();
+        this._context.beginPath();
+        this._context.rect(x, y, width, height);
+        this._context.fillStyle = color;
+        this._context.fill();
     }
 }

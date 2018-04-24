@@ -1,51 +1,77 @@
+import { shuffle } from 'app/array/shuffle';
 import { Vector } from 'app/geometry/Vector';
+import { ICell } from 'app/grid/ICell';
 import { IPosition } from 'app/grid/IPosition';
-import { CellType } from 'app/maze/CellType';
-import { equalPosition } from 'app/maze/helper/equalPosition';
-import { randomSidePosition } from 'app/maze/helper/randomSidePosition';
-import { roomToCellPosition } from 'app/maze/helper/roomToCellPosition';
+import { CellType, isClosedDoor, isDoor, isOpenDoor, isRoom, isUnset } from 'app/maze/CellType';
+import { isInPath } from 'app/maze/helper/isInPath';
 import { startDirection } from 'app/maze/helper/startDirection';
+import { IPossibility } from 'app/maze/IPossibility';
 import { Maze } from 'app/maze/Maze';
+import { Maybe } from 'app/monad/Maybe';
+import { random } from 'app/number/random';
 
 export class Generator {
-    private _maze: Maze;
+    private readonly _horizontalRooms: number;
+    private readonly _verticalRooms: number;
 
-    public constructor(maze: Maze) {
-        this._maze = maze;
+    public constructor(horizontalRooms: number, verticalRooms: number) {
+        this._horizontalRooms = horizontalRooms;
+        this._verticalRooms = verticalRooms;
     }
 
-    public generate(): void {
-        this.reset();
+    public generate(): Maze {
+        const maze: Maze = new Maze(
+            (this._horizontalRooms * 2) + 1,
+            (this._verticalRooms * 2) + 1
+        );
+        const start: Maybe<ICell<CellType>> = maze.getCell({
+            col: (random(1, this._horizontalRooms) * 2) - 1,
+            row: 0
+        });
+        const end: Maybe<ICell<CellType>> = maze.getCell({
+            col: (random(1, this._verticalRooms) * 2) - 1,
+            row: maze.height - 1
+        });
+        const direction: Vector = startDirection(start.value.position, maze.width, maze.height);
+        const room: Maybe<ICell<CellType>> = maze.nextCell(start, direction);
 
-        const start: IPosition = this.randomStart();
-        const end: IPosition = this.randomEnd(start);
-        const direction: Vector = startDirection(start, this._maze.width, this._maze.height);
+        start.value.value = CellType.OpenDoor;
+        room.value.value = CellType.Room;
+        end.value.value = CellType.OpenDoor;
 
+        this.createPath(room, direction, maze);
+
+        /*
+        const path: IPosition[] = this.calculatePath(room, direction, [start.value.position, room.value.position]);
+
+        path.push(end.value.position);
+
+        path.forEach((position: IPosition): void => {
+            const cell: Maybe<ICell<CellType>> = this._maze.getCell(position);
+
+            cell.do((c: ICell<CellType>): void => {
+                if (c.value === CellType.ClosedDoor) {
+                    c.value = CellType.OpenDoor;
+                }
+            });
+        });
+/**/
+        return maze;
     }
 
-    private randomEnd(start: IPosition): IPosition {
-        let end: IPosition;
+    private createPath(cell: Maybe<ICell<CellType>>, direction: Vector, maze: Maze): void {
+        const possibilities: IPossibility[] = shuffle(maze.possiblePositions(cell, direction));
 
-        while (end === undefined || equalPosition(start, end)) {
-            const roomPosition: IPosition = randomSidePosition(this._maze.horizontalRooms, this._maze.verticalRooms);
+        possibilities.forEach((possibility: IPossibility): void => {
+            if (
+                isClosedDoor(possibility.door) &&
+                isUnset(possibility.room)
+            ) {
+                possibility.door.value.value = CellType.OpenDoor;
+                possibility.room.value.value = CellType.Room;
 
-            end = roomToCellPosition(roomPosition);
-        }
-
-        return end;
-    }
-
-    private randomStart(): IPosition {
-        const roomPosition: IPosition = randomSidePosition(this._maze.horizontalRooms, this._maze.verticalRooms);
-
-        return roomToCellPosition(roomPosition);
-    }
-
-    private reset(): void {
-        for (const cell of this._maze.getCells()) {
-            if (cell.value === CellType.OpenDoor) {
-                cell.value = CellType.ClosedDoor;
+                this.createPath(possibility.room, possibility.direction, maze);
             }
-        }
+        });
     }
 }
