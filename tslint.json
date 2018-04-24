@@ -1,0 +1,12 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint-rules"
+  ],
+  "jsRules": {},
+  "rules": {
+    "only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
+    "typedef-whitespace": false
+  },
+  "rulesDirectory": []
+}
