@@ -7,8 +7,10 @@ describe('CellType', (): void => {
     describe('getCellType', (): void => {
         it('return a Maybe with CellType as value', (): void => {
             const c: Maybe<ICell<CellType>> = Maybe.fromValue({
-                col: 12,
-                row: 5,
+                position: {
+                    col: 12,
+                    row: 5
+                },
                 value: CellType.ClosedDoor
             });
             const type: Maybe<CellType> = getCellType(c);

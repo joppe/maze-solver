@@ -43,8 +43,10 @@ describe('Grid', (): void => {
             const grid: Grid<boolean> = new Grid(4, 4, (): boolean => false);
 
             expect(grid.getCell({row: 1, col: 1})).toEqual({
-                col: 1,
-                row: 1,
+                position: {
+                    col: 1,
+                    row: 1
+                },
                 value: false
             });
 
@@ -68,7 +70,7 @@ describe('Grid', (): void => {
             let count : number = 0;
 
             for (const cell of cells) {
-                expect(cell.col).toBe(count);
+                expect(cell.position.col).toBe(count);
 
                 count += 1;
             }
@@ -85,7 +87,7 @@ describe('Grid', (): void => {
             let count : number = 0;
 
             for (const cell of cells) {
-                expect(cell.row).toBe(count);
+                expect(cell.position.row).toBe(count);
 
                 count += 1;
             }
