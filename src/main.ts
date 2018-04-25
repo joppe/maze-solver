@@ -1,7 +1,7 @@
 import { generate } from 'app/maze/generator/generate';
 import { Maze } from 'app/maze/Maze';
 import { Path } from 'app/maze/Path';
-import { solve } from 'app/maze/solver/Solver';
+import { solve } from 'app/maze/solver/solve';
 import { AsciiRenderer } from 'app/render/AsciiRenderer';
 import { CanvasRenderer } from 'app/render/CanvasRenderer';
 import { IRenderer } from 'app/render/IRenderer';
