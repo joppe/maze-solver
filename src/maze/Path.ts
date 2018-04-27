@@ -6,7 +6,6 @@ import { Maybe } from 'app/monad/Maybe';
 
 export class Path {
     private _cells: Maybe<ICell<CellType>>[] = [];
-    private _current: Maybe<ICell<CellType>>;
 
     public get length(): number {
         return this._cells.length;
@@ -31,7 +30,6 @@ export class Path {
     }
 
     public add(cell: Maybe<ICell<CellType>>): void {
-        this._current = cell;
         this._cells.push(cell);
     }
 
