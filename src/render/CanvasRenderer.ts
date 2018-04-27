@@ -6,6 +6,7 @@ import { Maybe } from 'app/monad/Maybe';
 import { IRenderer } from 'app/render/IRenderer';
 
 export interface IOptions {
+    optimizedColor: string;
     pathColor: string;
     roomWidth: number;
     roomHeight: number;
@@ -35,10 +36,6 @@ export class CanvasRenderer implements IRenderer {
 
     render(parent: HTMLElement): void {
         for (const cell of this._maze.getCells()) {
-            const x: number = this.getX(cell.position.col);
-            const y: number = this.getY(cell.position.row);
-            const width: number = cell.position.col % 2 === 1 ? this._options.roomWidth : this._options.wallWidth;
-            const height: number = cell.position.row % 2 === 1 ? this._options.roomHeight : this._options.wallHeight;
             let color: string;
 
             if (cell.value === CellType.Wall || cell.value === CellType.ClosedDoor) {
@@ -47,48 +44,42 @@ export class CanvasRenderer implements IRenderer {
                 color = this._options.roomColor;
             }
 
-            this.drawRectangle(
-                x,
-                y,
-                width,
-                height,
-                color
-            );
+            this.drawCell(cell, color);
         }
 
         parent.appendChild(this._canvas);
     }
 
     plot(path: Path): void {
-        let index: number = 0;
+        const pathCells: IterableIterator<Maybe<ICell<CellType>>> = path.getCells();
+        const optimizedCells: IterableIterator<Maybe<ICell<CellType>>> = path.getOptimized();
 
-        const draw: Function = (): void => {
-            if (index >= path.length) {
+        const drawOptimized: Function = (): void => {
+            const next: IteratorResult<Maybe<ICell<CellType>>> = optimizedCells.next();
+
+            if (next.done) {
                 return;
             }
 
-            const m: Maybe<ICell<CellType>> = path.get(index);
-            const cell: ICell<CellType> = m.value;
-            const x: number = this.getX(cell.position.col);
-            const y: number = this.getY(cell.position.row);
-            const width: number = cell.position.col % 2 === 1 ? this._options.roomWidth : this._options.wallWidth;
-            const height: number = cell.position.row % 2 === 1 ? this._options.roomHeight : this._options.wallHeight;
-            const color: string = this._options.pathColor;
+            this.drawCell(next.value.value, this._options.optimizedColor);
 
-            this.drawRectangle(
-                x,
-                y,
-                width,
-                height,
-                color
-            );
-
-            index += 1;
-
-            window.setTimeout(draw, this._options.speed);
+            window.setTimeout(drawOptimized, this._options.speed);
         };
 
-        draw();
+        const drawPath: Function = (): void => {
+            const next: IteratorResult<Maybe<ICell<CellType>>> = pathCells.next();
+
+            if (next.done) {
+                drawOptimized();
+                return;
+            }
+
+            this.drawCell(next.value.value, this._options.pathColor);
+
+            window.setTimeout(drawPath, this._options.speed);
+        };
+
+        drawPath();
     }
 
     private getX(col: number): number {
@@ -111,6 +102,15 @@ export class CanvasRenderer implements IRenderer {
 
     private getPathCount(unit: number): number {
         return Math.floor(unit / 2);
+    }
+
+    private drawCell(cell: ICell<CellType>, color: string): void {
+        const x: number = this.getX(cell.position.col);
+        const y: number = this.getY(cell.position.row);
+        const width: number = cell.position.col % 2 === 1 ? this._options.roomWidth : this._options.wallWidth;
+        const height: number = cell.position.row % 2 === 1 ? this._options.roomHeight : this._options.wallHeight;
+
+        this.drawRectangle(x, y, width, height, color);
     }
 
     private drawRectangle(x: number, y: number, width: number, height: number, color: string): void {

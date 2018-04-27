@@ -1,7 +1,7 @@
 import { generate } from 'app/maze/generator/generate';
 import { Maze } from 'app/maze/Maze';
 import { Path } from 'app/maze/Path';
-import { solve } from 'app/maze/solver/Solver';
+import { solve } from 'app/maze/solver/solve';
 import { AsciiRenderer } from 'app/render/AsciiRenderer';
 import { CanvasRenderer } from 'app/render/CanvasRenderer';
 import { IRenderer } from 'app/render/IRenderer';
@@ -10,6 +10,7 @@ const body: HTMLElement = window.document.querySelector('body');
 const maze: Maze = generate(10, 10);
 const ascii: IRenderer = new AsciiRenderer(maze);
 const canvas: IRenderer = new CanvasRenderer(maze, {
+    optimizedColor: '#0f0',
     pathColor: '#f00',
     roomColor: '#fff',
     roomHeight: 30,

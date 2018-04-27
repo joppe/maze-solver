@@ -1,26 +1,14 @@
 import { ICell } from 'app/grid/ICell';
-import { IPosition } from 'app/grid/IPosition';
 import { CellType } from 'app/maze/CellType';
 import { equalPosition } from 'app/maze/helper/equalPosition';
 import { Maybe } from 'app/monad/Maybe';
 
 export class Path {
     private _cells: Maybe<ICell<CellType>>[] = [];
+    private _marks: number[] = [];
 
     public get length(): number {
         return this._cells.length;
-    }
-
-    public findByPosition(position: IPosition, maxIndex?: number): Maybe<ICell<CellType>> {
-        const cell: Maybe<ICell<CellType>> | undefined = this._cells.find((b: Maybe<ICell<CellType>>, index: number): boolean => {
-            return (maxIndex === undefined || maxIndex >= index) && equalPosition(position, b.value.position);
-        });
-
-        if (cell === undefined) {
-            return Maybe.none();
-        }
-
-        return cell;
     }
 
     public has(cell: Maybe<ICell<CellType>>): boolean {
@@ -33,7 +21,31 @@ export class Path {
         this._cells.push(cell);
     }
 
-    public get(index: number): Maybe<ICell<CellType>> {
-        return this._cells[index];
+    public * getCells(): IterableIterator<Maybe<ICell<CellType>>> {
+        for (const cell of this._cells) {
+            yield cell;
+        }
+    }
+
+    public mark(count: number): void {
+        for (let i: number = count; i > 0; i -= 1) {
+            this._marks.push(this.length - i);
+        }
+    }
+
+    public release(count: number): void {
+        for (let i: number = 0; i < count; i += 1) {
+            this._marks.pop();
+        }
+    }
+
+    public * getOptimized(): IterableIterator<Maybe<ICell<CellType>>> {
+        for (const mark of this._marks) {
+            yield this._cells[mark];
+        }
+    }
+
+    public debug(): void {
+        window.console.log(this._marks);
     }
 }
