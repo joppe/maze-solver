@@ -60,15 +60,16 @@ export class CanvasRenderer implements IRenderer {
     }
 
     plot(path: Path): void {
-        let index: number = 0;
+        const cells: IterableIterator<Maybe<ICell<CellType>>> = path.getCells();
 
         const draw: Function = (): void => {
-            if (index >= path.length) {
+            const next: IteratorResult<Maybe<ICell<CellType>>> = cells.next();
+
+            if (next.done) {
                 return;
             }
 
-            const m: Maybe<ICell<CellType>> = path.get(index);
-            const cell: ICell<CellType> = m.value;
+            const cell: ICell<CellType> = next.value.value;
             const x: number = this.getX(cell.position.col);
             const y: number = this.getY(cell.position.row);
             const width: number = cell.position.col % 2 === 1 ? this._options.roomWidth : this._options.wallWidth;
@@ -82,8 +83,6 @@ export class CanvasRenderer implements IRenderer {
                 height,
                 color
             );
-
-            index += 1;
 
             window.setTimeout(draw, this._options.speed);
         };

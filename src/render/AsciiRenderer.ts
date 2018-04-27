@@ -1,5 +1,7 @@
 import { ICell } from 'app/grid/ICell';
+import { IPosition } from 'app/grid/IPosition';
 import { CellType } from 'app/maze/CellType';
+import { containsPosition } from 'app/maze/helper/containsPosition';
 import { Maze } from 'app/maze/Maze';
 import { Path } from 'app/maze/Path';
 import { Maybe } from 'app/monad/Maybe';
@@ -42,25 +44,28 @@ export class AsciiRenderer implements IRenderer {
     }
 
     plot(path: Path): void {
-        let index: number = 0;
+        const cells: IterableIterator<Maybe<ICell<CellType>>> = path.getCells();
+        const positions: IPosition[] = [];
 
         const draw: Function = (): void => {
-            if (index >= path.length) {
+            const next: IteratorResult<Maybe<ICell<CellType>>> = cells.next();
+
+            if (next.done) {
                 return;
             }
 
             let text: string = '';
             let row: number = 0;
 
-            for (const cell of this._maze.getCells()) {
-                const p: Maybe<ICell<CellType>> = path.findByPosition(cell.position, index);
+            positions.push(next.value.value.position);
 
+            for (const cell of this._maze.getCells()) {
                 if (cell.position.row !== row) {
                     text += NEW_LINE;
                     row = cell.position.row;
                 }
 
-                if (p.hasValue()) {
+                if (containsPosition(positions, cell.position)) {
                     text += '0';
                 } else if (cell.value === CellType.ClosedDoor || cell.value === CellType.Wall) {
                     text += '*';
@@ -70,8 +75,6 @@ export class AsciiRenderer implements IRenderer {
             }
 
             this._element.innerText = text;
-
-            index += 1;
 
             window.setTimeout(draw, 50);
         };
