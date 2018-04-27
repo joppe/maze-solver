@@ -1,7 +1,8 @@
 import { Maze } from 'app/maze/Maze';
-import { IRenderer } from 'app/render/IRenderer';
 import { Path } from 'app/maze/Path';
+import { IRenderer } from 'app/render/IRenderer';
 export interface IOptions {
+    optimizedColor: string;
     pathColor: string;
     roomWidth: number;
     roomHeight: number;
@@ -23,5 +24,6 @@ export declare class CanvasRenderer implements IRenderer {
     private getY(row);
     private getWallCount(unit);
     private getPathCount(unit);
+    private drawCell(cell, color);
     private drawRectangle(x, y, width, height, color);
 }
