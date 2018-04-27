@@ -73,7 +73,5 @@ export function solve(maze: Maze): Path {
 
     findPath(room, direction);
 
-    path.debug();
-
     return path;
 }
