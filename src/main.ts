@@ -10,6 +10,7 @@ const body: HTMLElement = window.document.querySelector('body');
 const maze: Maze = generate(10, 10);
 const ascii: IRenderer = new AsciiRenderer(maze);
 const canvas: IRenderer = new CanvasRenderer(maze, {
+    optimizedColor: '#0f0',
     pathColor: '#f00',
     roomColor: '#fff',
     roomHeight: 30,

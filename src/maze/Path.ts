@@ -5,6 +5,7 @@ import { Maybe } from 'app/monad/Maybe';
 
 export class Path {
     private _cells: Maybe<ICell<CellType>>[] = [];
+    private _marks: number[] = [];
 
     public get length(): number {
         return this._cells.length;
@@ -24,5 +25,27 @@ export class Path {
         for (const cell of this._cells) {
             yield cell;
         }
+    }
+
+    public mark(count: number): void {
+        for (let i: number = count; i > 0; i -= 1) {
+            this._marks.push(this.length - i);
+        }
+    }
+
+    public release(count: number): void {
+        for (let i: number = 0; i < count; i += 1) {
+            this._marks.pop();
+        }
+    }
+
+    public * getOptimized(): IterableIterator<Maybe<ICell<CellType>>> {
+        for (const mark of this._marks) {
+            yield this._cells[mark];
+        }
+    }
+
+    public debug(): void {
+        window.console.log(this._marks);
     }
 }

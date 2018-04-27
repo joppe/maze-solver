@@ -33,11 +33,13 @@ export function solve(maze: Maze): Path {
 
         for (const possibility of possibilities) {
             if (isExit(possibility.door)) {
-                path.add(possibility.door);
-
                 if (isRoom(possibility.room)) {
                     path.add(possibility.room);
+                    path.mark(1);
                 }
+
+                path.add(possibility.door);
+                path.mark(1);
 
                 return true;
             }
@@ -52,10 +54,13 @@ export function solve(maze: Maze): Path {
             ) {
                 path.add(possibility.door);
                 path.add(possibility.room);
+                path.mark(2);
 
                 if (findPath(possibility.room, possibility.direction)) {
                     return true;
                 }
+
+                path.release(2);
             }
         }
 
@@ -64,8 +69,11 @@ export function solve(maze: Maze): Path {
 
     path.add(start);
     path.add(room);
+    path.mark(2);
 
     findPath(room, direction);
+
+    path.debug();
 
     return path;
 }

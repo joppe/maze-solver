@@ -51,21 +51,35 @@ export class CanvasRenderer implements IRenderer {
     }
 
     plot(path: Path): void {
-        const cells: IterableIterator<Maybe<ICell<CellType>>> = path.getCells();
+        const pathCells: IterableIterator<Maybe<ICell<CellType>>> = path.getCells();
+        const optimizedCells: IterableIterator<Maybe<ICell<CellType>>> = path.getOptimized();
 
-        const draw: Function = (): void => {
-            const next: IteratorResult<Maybe<ICell<CellType>>> = cells.next();
+        const drawOptimized: Function = (): void => {
+            const next: IteratorResult<Maybe<ICell<CellType>>> = optimizedCells.next();
 
             if (next.done) {
                 return;
             }
 
-            this.drawCell(next.value.value, this._options.pathColor);
+            this.drawCell(next.value.value, this._options.optimizedColor);
 
-            window.setTimeout(draw, this._options.speed);
+            window.setTimeout(drawOptimized, this._options.speed);
         };
 
-        draw();
+        const drawPath: Function = (): void => {
+            const next: IteratorResult<Maybe<ICell<CellType>>> = pathCells.next();
+
+            if (next.done) {
+                drawOptimized();
+                return;
+            }
+
+            this.drawCell(next.value.value, this._options.pathColor);
+
+            window.setTimeout(drawPath, this._options.speed);
+        };
+
+        drawPath();
     }
 
     private getX(col: number): number {
