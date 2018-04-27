@@ -6,6 +6,7 @@
     "build": "webpack",
     "dev": "webpack-dev-server --open",
     "lint": "tslint --config ./tslint.json --project tsconfig.json",
+    "postinstall": "npm run build",
     "setup": "node ./script/directory-structure.js",
     "test": "karma start karma.conf.js",
     "test:watch": "karma start karma.conf.js --no-single-run --auto-watch"
@@ -28,20 +29,20 @@
   ],
   "devDependencies": {
     "@types/jasmine": "^2.8.6",
-    "awesome-typescript-loader": "^3.4.1",
     "jasmine-core": "^2.99.0",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.1",
     "karma-typescript": "^3.0.12",
-    "source-map-loader": "^0.2.3",
     "tslint": "^5.9.1",
-    "tslint-rules": "git+https://github.com/joppe/tslint-rules.git",
+    "tslint-rules": "git+https://github.com/joppe/tslint-rules.git"
+  },
+  "dependencies": {
+    "awesome-typescript-loader": "^3.4.1",
+    "http-server": "^0.11.1",
+    "source-map-loader": "^0.2.3",
     "typescript": "^2.7.1",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.1"
-  },
-  "dependencies": {
-    "http-server": "^0.11.1"
   }
 }
