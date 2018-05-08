@@ -38,9 +38,17 @@
     "tslint-rules": "git+https://github.com/joppe/tslint-rules.git"
   },
   "dependencies": {
+    "autoprefixer": "^7.2.5",
     "awesome-typescript-loader": "^3.4.1",
+    "bootstrap": "^4.1.1",
+    "css-loader": "^0.28.9",
+    "extract-text-webpack-plugin": "^3.0.2",
     "http-server": "^0.11.1",
+    "node-sass": "^4.7.2",
+    "postcss-loader": "^2.0.10",
+    "sass-loader": "^6.0.6",
     "source-map-loader": "^0.2.3",
+    "style-loader": "^0.20.1",
     "typescript": "^2.7.1",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.11.1"
