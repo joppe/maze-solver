@@ -1,9 +1,11 @@
+import { rand } from 'app/number/random';
+
 export function shuffle<T>(arr: Array<T>): Array<T> {
     let currentIndex: number = arr.length;
     const copy: Array<T> = [...arr];
 
     while (currentIndex !== 0) {
-        const randomIndex: number = Math.floor(Math.random() * currentIndex);
+        const randomIndex: number = Math.floor(rand() * currentIndex);
 
         currentIndex -= 1;
 
