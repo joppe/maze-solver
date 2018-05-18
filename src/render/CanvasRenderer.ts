@@ -34,7 +34,7 @@ export class CanvasRenderer implements IRenderer {
         this._context = this._canvas.getContext('2d');
     }
 
-    render(parent: HTMLElement): void {
+    public render(parent: HTMLElement): void {
         for (const cell of this._maze.getCells()) {
             let color: string;
 
@@ -50,36 +50,38 @@ export class CanvasRenderer implements IRenderer {
         parent.appendChild(this._canvas);
     }
 
-    plot(path: Path): void {
-        const pathCells: IterableIterator<Maybe<ICell<CellType>>> = path.getCells();
-        const optimizedCells: IterableIterator<Maybe<ICell<CellType>>> = path.getOptimized();
+    public async plot(path: Path): Promise<void> {
+        //tslint:disable-next-line promise-must-complete
+        return new Promise<void>((resolve: Function, reject: Function): void => {
+            const pathCells: IterableIterator<Maybe<ICell<CellType>>> = path.getCells();
+            const optimizedCells: IterableIterator<Maybe<ICell<CellType>>> = path.getOptimized();
 
-        const drawOptimized: Function = (): void => {
-            const next: IteratorResult<Maybe<ICell<CellType>>> = optimizedCells.next();
+            const drawOptimized: Function = (): void => {
+                const next: IteratorResult<Maybe<ICell<CellType>>> = optimizedCells.next();
 
-            if (next.done) {
-                return;
-            }
+                if (next.done) {
+                    return resolve();
+                }
 
-            this.drawCell(next.value.value, this._options.optimizedColor);
+                this.drawCell(next.value.value, this._options.optimizedColor);
 
-            window.setTimeout(drawOptimized, this._options.speed);
-        };
+                window.setTimeout(drawOptimized, this._options.speed);
+            };
 
-        const drawPath: Function = (): void => {
-            const next: IteratorResult<Maybe<ICell<CellType>>> = pathCells.next();
+            const drawPath: Function = (): void => {
+                const next: IteratorResult<Maybe<ICell<CellType>>> = pathCells.next();
 
-            if (next.done) {
-                drawOptimized();
-                return;
-            }
+                if (next.done) {
+                    return drawOptimized();
+                }
 
-            this.drawCell(next.value.value, this._options.pathColor);
+                this.drawCell(next.value.value, this._options.pathColor);
 
-            window.setTimeout(drawPath, this._options.speed);
-        };
+                window.setTimeout(drawPath, this._options.speed);
+            };
 
-        drawPath();
+            drawPath();
+        });
     }
 
     private getX(col: number): number {

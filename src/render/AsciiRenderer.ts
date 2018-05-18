@@ -21,7 +21,7 @@ export class AsciiRenderer implements IRenderer {
         this._element.setAttribute('style', 'line-height: 0.6; padding: 5px;');
     }
 
-    render(parent: HTMLElement): void {
+    public render(parent: HTMLElement): void {
         let text: string = '';
         let row: number = 0;
 
@@ -43,42 +43,45 @@ export class AsciiRenderer implements IRenderer {
         parent.appendChild(this._element);
     }
 
-    plot(path: Path): void {
-        const cells: IterableIterator<Maybe<ICell<CellType>>> = path.getCells();
-        const positions: IPosition[] = [];
+    public async plot(path: Path): Promise<void> {
+        //tslint:disable-next-line promise-must-complete
+        return new Promise<void>((resolve: () => void, reject: () => void): void => {
+            const cells: IterableIterator<Maybe<ICell<CellType>>> = path.getCells();
+            const positions: Array<IPosition> = [];
 
-        const draw: Function = (): void => {
-            const next: IteratorResult<Maybe<ICell<CellType>>> = cells.next();
+            const draw: Function = (): void => {
+                const next: IteratorResult<Maybe<ICell<CellType>>> = cells.next();
 
-            if (next.done) {
-                return;
-            }
-
-            let text: string = '';
-            let row: number = 0;
-
-            positions.push(next.value.value.position);
-
-            for (const cell of this._maze.getCells()) {
-                if (cell.position.row !== row) {
-                    text += NEW_LINE;
-                    row = cell.position.row;
+                if (next.done) {
+                    return resolve();
                 }
 
-                if (containsPosition(positions, cell.position)) {
-                    text += '0';
-                } else if (cell.value === CellType.ClosedDoor || cell.value === CellType.Wall) {
-                    text += '*';
-                } else {
-                    text += ' ';
+                let text: string = '';
+                let row: number = 0;
+
+                positions.push(next.value.value.position);
+
+                for (const cell of this._maze.getCells()) {
+                    if (cell.position.row !== row) {
+                        text += NEW_LINE;
+                        row = cell.position.row;
+                    }
+
+                    if (containsPosition(positions, cell.position)) {
+                        text += '0';
+                    } else if (cell.value === CellType.ClosedDoor || cell.value === CellType.Wall) {
+                        text += '*';
+                    } else {
+                        text += ' ';
+                    }
                 }
-            }
 
-            this._element.innerText = text;
+                this._element.innerText = text;
 
-            window.setTimeout(draw, 50);
-        };
+                window.setTimeout(draw, 50);
+            };
 
-        draw();
+            draw();
+        });
     }
 }
