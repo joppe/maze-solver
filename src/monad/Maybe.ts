@@ -16,7 +16,7 @@ export class Maybe<T> {
         throw new Error('There is only "none"');
     }
 
-    public static some<T>(value: T): Maybe<T> {
+    public static SOME<T>(value: T): Maybe<T> {
         if (value === undefined) {
             throw new Error('Provided value must not be undefined');
         }
@@ -24,12 +24,12 @@ export class Maybe<T> {
         return new Maybe(value);
     }
 
-    public static none<T>(): Maybe<T> {
+    public static NONE<T>(): Maybe<T> {
         return new Maybe<T>(undefined);
     }
 
-    public static fromValue<T>(value: T | undefined): Maybe<T> {
-        return value !== undefined ? Maybe.some(value) : Maybe.none<T>();
+    public static FROM_VALUE<T>(value: T | undefined): Maybe<T> {
+        return value !== undefined ? Maybe.SOME(value) : Maybe.NONE<T>();
     }
 
     /**
@@ -37,9 +37,9 @@ export class Maybe<T> {
      */
     public map<R>(f: (value: T) => R): Maybe<R> {
         if (this.hasValue()) {
-            return Maybe.some(f(this._value));
+            return Maybe.SOME(f(this._value));
         } else {
-            return Maybe.none<R>();
+            return Maybe.NONE<R>();
         }
     }
 
@@ -50,7 +50,7 @@ export class Maybe<T> {
         if (this.hasValue()) {
             return f(this._value);
         } else {
-            return Maybe.none<R>();
+            return Maybe.NONE<R>();
         }
     }
 
