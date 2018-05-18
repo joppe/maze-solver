@@ -1,12 +1,18 @@
 {
   "defaultSeverity": "error",
   "extends": [
-    "tslint-rules"
+      "tslint-microsoft-contrib"
   ],
   "jsRules": {},
   "rules": {
-    "only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
-    "typedef-whitespace": false
+      "array-type": [true, "generic"],
+      "export-name": false,
+      "missing-jsdoc": false,
+      "no-implicit-dependencies": false,
+      "no-reserved-keywords": false,
+      "no-submodule-imports": false,
+      "prefer-array-literal": false,
+      "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"]
   },
   "rulesDirectory": []
 }
