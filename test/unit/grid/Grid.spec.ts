@@ -1,5 +1,5 @@
-import { Grid } from 'app/grid/Grid';
-import { ICell } from 'app/grid/ICell';
+import { Grid } from '../../../src/grid/Grid';
+import { ICell } from '../../../src/grid/ICell';
 
 describe('Grid', (): void => {
     describe('length', (): void => {
@@ -78,7 +78,6 @@ describe('Grid', (): void => {
             expect(count).toBe(6);
         });
     });
-
 
     describe('getCol', (): void => {
         it('returns all the cells in a single column', (): void => {

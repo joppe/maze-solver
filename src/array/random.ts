@@ -1,5 +1,5 @@
-export function random<T>(arr: Array<T>): T {
-    const index: number = Math.round((arr.length - 1) * Math.random());
+import {random as randomNumber} from 'app/number/random';
 
-    return arr[index];
+export function random<T>(arr: Array<T>): T {
+    return arr[randomNumber(0, arr.length - 1)];
 }

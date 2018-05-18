@@ -1,4 +1,4 @@
-import { Vector } from 'app/geometry/Vector';
+import { Vector } from '../../../src/geometry/Vector';
 
 describe('Vector', (): void => {
     it('getter for x', (): void => {

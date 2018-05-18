@@ -1,30 +1,69 @@
-import { generate } from 'app/maze/generator/generate';
-import { Maze } from 'app/maze/Maze';
-import { Path } from 'app/maze/Path';
-import { solve } from 'app/maze/solver/solve';
-import { AsciiRenderer } from 'app/render/AsciiRenderer';
-import { CanvasRenderer } from 'app/render/CanvasRenderer';
-import { IRenderer } from 'app/render/IRenderer';
+import { App } from 'app/App';
+import { getElement } from 'app/dom/element';
+import { Maybe } from 'app/monad/Maybe';
 
-const body: HTMLElement = window.document.querySelector('body');
-const maze: Maze = generate(10, 10);
-const ascii: IRenderer = new AsciiRenderer(maze);
-const canvas: IRenderer = new CanvasRenderer(maze, {
-    optimizedColor: '#0f0',
-    pathColor: '#f00',
-    roomColor: '#fff',
-    roomHeight: 30,
-    roomWidth: 30,
-    speed: 10,
-    wallColor: '#000',
-    wallHeight: 5,
-    wallWidth: 5
+const app: App = new App();
+const horizontalRoomCountElement: Maybe<HTMLElement> = getElement<HTMLElement>('.js-horizontal-room-count');
+const horizontalRoomInputElement: Maybe<HTMLInputElement> = getElement<HTMLInputElement>('.js-horizontal-room-input');
+const verticalRoomCountElement: Maybe<HTMLElement> = getElement<HTMLElement>('.js-vertical-room-count');
+const verticalRoomInputElement: Maybe<HTMLInputElement> = getElement<HTMLInputElement>('.js-vertical-room-input');
+const renderTypeSelectElement: Maybe<HTMLSelectElement> = getElement<HTMLSelectElement>('.js-render-type');
+const generateElement: Maybe<HTMLButtonElement> = getElement<HTMLButtonElement>('.js-generate');
+const solveElement: Maybe<HTMLButtonElement> = getElement<HTMLButtonElement>('.js-solve');
+const mazeElement: Maybe<HTMLElement> = getElement<HTMLElement>('.js-maze');
+
+function setButtonState(el: Maybe<HTMLButtonElement>, disabled: boolean): void {
+    el.do((button: HTMLButtonElement): void => {
+        if (disabled === true) {
+            button.setAttribute('disabled', 'disabled');
+        } else {
+            button.removeAttribute('disabled');
+        }
+    });
+}
+
+horizontalRoomInputElement.do((input: HTMLInputElement): void => {
+    input.addEventListener('change', (): void => {
+        const value: string = input.value;
+
+        app.horizontalRoomCount = parseInt(value, 10);
+        horizontalRoomCountElement.do((count: HTMLElement): void => {
+            count.innerText = value;
+        });
+    });
 });
 
-ascii.render(body);
-canvas.render(body);
+verticalRoomInputElement.do((input: HTMLInputElement): void => {
+    input.addEventListener('change', (): void => {
+        const value: string = input.value;
 
-const path: Path = solve(maze);
+        app.verticalRoomCount = parseInt(value, 10);
+        verticalRoomCountElement.do((count: HTMLElement): void => {
+            count.innerText = value;
+        });
+    });
+});
 
-ascii.plot(path);
-canvas.plot(path);
+renderTypeSelectElement.do((select: HTMLSelectElement): void => {
+    select.addEventListener('change', (): void => {
+        app.renderType = select.value;
+    });
+});
+
+generateElement.do((button: HTMLButtonElement): void => {
+    button.addEventListener('click', (): void => {
+        app.create(mazeElement.value);
+    });
+});
+
+solveElement.do((button: HTMLButtonElement): void => {
+    button.addEventListener('click', async (): Promise<void> => {
+        setButtonState(generateElement, true);
+        setButtonState(solveElement, true);
+
+        await app.solve();
+
+        setButtonState(generateElement, false);
+        setButtonState(solveElement, false);
+    });
+});

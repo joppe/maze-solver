@@ -1,4 +1,4 @@
-import { degreesToRadians, radiansToDegrees } from 'app/geometry/angle';
+import { degreesToRadians, radiansToDegrees } from '../../../src/geometry/angle';
 
 describe('angle', (): void => {
     describe('degreesToRadians', (): void => {

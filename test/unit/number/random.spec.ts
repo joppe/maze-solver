@@ -1,4 +1,4 @@
-import { random } from 'app/number/random';
+import { random } from '../../../src/number/random';
 
 describe('random', (): void => {
     it('generates a random number with a min and max value', (): void => {

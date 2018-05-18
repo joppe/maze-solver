@@ -23,7 +23,7 @@ export function isA(cell: Maybe<ICell<CellType>>, type: CellType): boolean {
     return t.getOrElse(undefined) === type;
 }
 
-export function isOneOf(cell: Maybe<ICell<CellType>>, types: CellType[]): boolean {
+export function isOneOf(cell: Maybe<ICell<CellType>>, types: Array<CellType>): boolean {
     const t: Maybe<CellType> = getCellType(cell);
 
     return types.indexOf(t.getOrElse(undefined)) !== -1;
