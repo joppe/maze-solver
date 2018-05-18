@@ -1,7 +1,7 @@
 {
-  "name": "boilerplate",
-  "version": "0.0.0",
-  "description": "Boilerplate project for TypeScript/Karma/SystemJS",
+  "name": "maze-solver",
+  "version": "2.1.0",
+  "description": "Fun project to generate and solve a maze",
   "scripts": {
     "build": "webpack",
     "dev": "webpack-dev-server --open",
