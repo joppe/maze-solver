@@ -4,8 +4,8 @@ import { equalPosition } from 'app/maze/helper/equalPosition';
 import { Maybe } from 'app/monad/Maybe';
 
 export class Path {
-    private _cells: Maybe<ICell<CellType>>[] = [];
-    private _marks: number[] = [];
+    private _cells: Array<Maybe<ICell<CellType>>> = [];
+    private _marks: Array<number> = [];
 
     public get length(): number {
         return this._cells.length;

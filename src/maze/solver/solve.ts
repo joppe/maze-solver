@@ -29,7 +29,7 @@ export function solve(maze: Maze): Path {
     const room: Maybe<ICell<CellType>> = maze.nextCell(start, direction);
 
     function findPath(currentCell: Maybe<ICell<CellType>>, currentDirection: Vector): boolean {
-        const possibilities: IPossibility[] = maze.getPossibilities(currentCell, currentDirection);
+        const possibilities: Array<IPossibility> = maze.getPossibilities(currentCell, currentDirection);
 
         for (const possibility of possibilities) {
             if (isExit(possibility.door)) {

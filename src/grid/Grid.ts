@@ -1,6 +1,6 @@
 import { ICell } from 'app/grid/ICell';
 import { IPosition } from 'app/grid/IPosition';
-import { IValueFactory } from 'app/grid/IValueFactory';
+import { ValueFactory } from 'app/grid/ValueFactory';
 import { IDictionary } from 'app/object/IDictionary';
 
 export class Grid<T> {
@@ -21,7 +21,7 @@ export class Grid<T> {
         return this._rows;
     }
 
-    public constructor(rows: number, cols: number, valueFactory: IValueFactory<T> = (): undefined => undefined) {
+    public constructor(rows: number, cols: number, valueFactory: ValueFactory<T> = (): undefined => undefined) {
         this._rows = rows;
         this._cols = cols;
         this._length = rows * cols;
