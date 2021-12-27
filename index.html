@@ -1,48 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Maze generator/solver</title>
-
-        <link href="https://fonts.googleapis.com/css?family=Space+Mono" rel="stylesheet">
-        <link href="dist/main.css" rel="stylesheet">
-    </head>
-
-    <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-sm-6  col-md-4">
-                    <div class="form-group">
-                        <label for="input-horizontal-room-count">Horizontal Room Count <small class="text-muted  js-horizontal-room-count">10</small></label>
-                        <input id="input-horizontal-room-count" class="form-control  js-horizontal-room-input" name="horizontalRoomCount" type="range" min="5" max="100" step="1" value="10">
-                    </div>
-                    <div class="form-group">
-                        <label for="input-vertical-room-count">Vertical Room Count <small class="text-muted  js-vertical-room-count">10</small></label>
-                        <input id="input-vertical-room-count" class="form-control  js-vertical-room-input" name="verticalRoomCount" type="range" min="5" max="100" step="1" value="10">
-                    </div>
-                </div>
-                <div class="col-sm-6  col-md-4">
-                    <div class="form-group">
-                        <label for="select-type">Render</label>
-                        <select id="select-type" class="form-control  js-render-type" name="renderType">
-                            <option value="canvas" selected>Canvas</option>
-                            <option value="ascii">ASCII</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-12">
-                    <button class="btn  btn-primary  js-generate">Generate</button>
-                    <button class="btn  btn-primary  js-solve">Solve</button>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-12  pt-3  js-maze"></div>
-            </div>
-        </div>
-        <script type="text/javascript" src="dist/main.js"></script>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>
