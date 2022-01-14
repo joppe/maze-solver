@@ -15,7 +15,7 @@ export class Basic implements Renderer {
   public render(container: HTMLElement): void {
     this._engine.setDimensions(this._grid.rows, this._grid.columns);
 
-    this._grid.forEachCell((cell) => {
+    this._grid.forEachCell((cell: Cell): void => {
       this.renderCell(cell);
     });
 
