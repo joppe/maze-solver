@@ -3,10 +3,9 @@ import { random } from '../../../math/random/random';
 import { Cell } from '../../grid/cell/Cell';
 import { Grid } from '../../grid/Grid';
 import type { Generator } from '../Generator.type';
-import type { Options } from '../Options.type';
 
-export const huntAntKill: Generator = (options: Options) => {
-  const grid = new Grid(options);
+export const huntAntKill: Generator = (factory: () => Grid): Grid => {
+  const grid = factory();
   let current: Cell | undefined = grid.getRandomCell();
 
   while (current !== undefined) {
