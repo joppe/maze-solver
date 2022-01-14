@@ -41,6 +41,14 @@ export class Canvas implements Engine {
       this.text(point, content, style?.color ?? this._styles.textColor);
     }
 
+    if (!cell.getNeighbour(Direction.North)) {
+      this.topLine(point);
+    }
+
+    if (!cell.getNeighbour(Direction.West)) {
+      this.leftLine(point);
+    }
+
     if (!cell.linked(cell.getNeighbour(Direction.South))) {
       this.bottomLine(point);
     }
@@ -70,8 +78,6 @@ export class Canvas implements Engine {
 
     container.style.width = `${this._styles.size * this._columns}px`;
     container.style.height = `${this._styles.size * this._rows}px`;
-    container.style.border = `2px solid ${this._styles.borderColor}`;
-    container.style.boxShadow = `inset 0 0 0 2px ${this._styles.borderColor}`;
 
     container.appendChild(this._canvas);
 
@@ -85,10 +91,24 @@ export class Canvas implements Engine {
     );
   }
 
+  private topLine(point: Point): void {
+    this.line(
+      { x: point.x, y: point.y },
+      { x: point.x + this._styles.size, y: point.y },
+    );
+  }
+
   private rightLine(point: Point): void {
     this.line(
       { x: point.x + this._styles.size, y: point.y },
       { x: point.x + this._styles.size, y: point.y + this._styles.size },
+    );
+  }
+
+  private leftLine(point: Point): void {
+    this.line(
+      { x: point.x, y: point.y },
+      { x: point.x, y: point.y + this._styles.size },
     );
   }
 
