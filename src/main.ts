@@ -3,6 +3,7 @@ import { deadEnds } from './maze/generator/deadEnds';
 import { huntAntKill } from './maze/generator/huntAndKill/huntAndKill';
 import { recursiveBacktracker } from './maze/generator/recursiveBacktracker/recursiveBacktracker';
 import { MaskedGrid } from './maze/grid/MaskedGrid';
+import { fromTemplate } from './maze/mask/fromTemplate';
 import { Mask } from './maze/mask/Mask';
 import { Colored } from './maze/render/Colored';
 import { Canvas } from './maze/render/engine/canvas/Canvas';
@@ -37,12 +38,18 @@ function methodRecursice(mask: Mask) {
   console.log('dea-ends', deadEnds(grid));
 }
 
-const mask = new Mask({ rows: 10, columns: 10 });
-mask.setCell({ column: 0, row: 0 }, false);
-mask.setCell({ column: 1, row: 0 }, false);
-mask.setCell({ column: 2, row: 0 }, false);
-mask.setCell({ column: 2, row: 1 }, false);
-mask.setCell({ column: 2, row: 2 }, false);
+const mask = fromTemplate(`
+  x........x
+  ....xx....
+  ...xxxx...
+  ....xx....
+  x........x
+  x........x
+  ....xx....
+  ...xxxx...
+  ....xx....
+  x........x
+`);
 
 methodHunt(mask);
 methodRecursice(mask);
