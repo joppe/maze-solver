@@ -7,12 +7,15 @@ import type { Options } from './Options.type';
 export class Mask {
   public readonly rows: number;
   public readonly columns: number;
-  private readonly cells: boolean[];
+  private cells: number[];
 
   public constructor(options: Options) {
     this.rows = options.rows;
     this.columns = options.columns;
-    this.cells = Array.from({ length: this.size }, () => true);
+    this.cells = Array.from(
+      { length: this.size },
+      (_: unknown, index: number): number => index,
+    );
   }
 
   public get size(): number {
@@ -20,17 +23,14 @@ export class Mask {
   }
 
   public get count(): number {
-    return this.cells.reduce((total: number, cell: boolean): number => {
-      if (cell) {
-        return total + 1;
-      }
-      return total;
-    }, 0);
+    return this.cells.length;
   }
 
   public getCell(position: Position): boolean {
     if (this.isValidPosition(position)) {
-      return this.cells[positionToIndex(position, this.columns)];
+      const index = positionToIndex(position, this.columns);
+
+      return this.cells.includes(index);
     }
 
     return false;
@@ -38,7 +38,15 @@ export class Mask {
 
   public setCell(position: Position, value: boolean): void {
     if (this.isValidPosition(position)) {
-      this.cells[positionToIndex(position, this.columns)] = value;
+      const index = positionToIndex(position, this.columns);
+
+      if (value && !this.cells.includes(index)) {
+        this.cells.push(index);
+      }
+
+      if (!value) {
+        this.cells = this.cells.filter((cell) => cell !== index);
+      }
     }
   }
 
@@ -55,7 +63,7 @@ export class Mask {
   }
 
   public randomPosition(): Position {
-    const index = random(0, this.size - 1);
+    const index = this.cells[random(0, this.count - 1)];
 
     return indexToPosition(index, this.columns);
   }
