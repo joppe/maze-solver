@@ -1,5 +1,4 @@
 import { Cell } from '../../../grid/cell/Cell';
-import { Direction } from '../../../grid/cell/direction';
 import type { CellStyle, Engine } from '../Engine.type';
 import { element } from './element/element';
 import type { ElementConfig } from './element/ElementConfig.type';
@@ -30,11 +29,11 @@ export class HTML implements Engine {
     const classes = ['cell'];
     const inlineStyles = [];
 
-    if (!cell.linked(cell.getNeighbour(Direction.South))) {
+    if (!cell.linked(cell.south)) {
       classes.push('cell--bottom');
     }
 
-    if (!cell.linked(cell.getNeighbour(Direction.East))) {
+    if (!cell.linked(cell.east)) {
       classes.push('cell--right');
     }
 

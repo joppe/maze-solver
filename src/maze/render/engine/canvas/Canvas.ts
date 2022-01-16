@@ -1,5 +1,4 @@
 import { Cell } from '../../../grid/cell/Cell';
-import { Direction } from '../../../grid/cell/direction';
 import type { CellStyle, Engine } from '../Engine.type';
 import type { Styles } from '../html/style/Styles.type';
 import type { Point } from './Point.type';
@@ -12,11 +11,11 @@ const DEFAULT_STYLES: Styles = {
 };
 
 export class Canvas implements Engine {
-  private readonly _styles: Styles;
-  private readonly _ctx: CanvasRenderingContext2D;
-  private readonly _canvas: HTMLCanvasElement;
-  private _rows: number | undefined;
-  private _columns: number | undefined;
+  protected readonly _ctx: CanvasRenderingContext2D;
+  protected _rows: number | undefined;
+  protected _columns: number | undefined;
+  protected readonly _styles: Styles;
+  protected readonly _canvas: HTMLCanvasElement;
 
   public constructor(styles: Partial<Styles> = {}) {
     this._styles = {
@@ -41,19 +40,19 @@ export class Canvas implements Engine {
       this.text(point, content, style?.color ?? this._styles.textColor);
     }
 
-    if (!cell.getNeighbour(Direction.North)) {
+    if (!cell.north) {
       this.topLine(point);
     }
 
-    if (!cell.getNeighbour(Direction.West)) {
+    if (!cell.west) {
       this.leftLine(point);
     }
 
-    if (!cell.linked(cell.getNeighbour(Direction.South))) {
+    if (!cell.linked(cell.south)) {
       this.bottomLine(point);
     }
 
-    if (!cell.linked(cell.getNeighbour(Direction.East))) {
+    if (!cell.linked(cell.east)) {
       this.rightLine(point);
     }
   }
@@ -119,7 +118,7 @@ export class Canvas implements Engine {
     };
   }
 
-  private line(from: Point, to: Point): void {
+  protected line(from: Point, to: Point): void {
     this._ctx.beginPath();
     this._ctx.strokeStyle = this._styles.borderColor;
     this._ctx.moveTo(from.x, from.y);
@@ -127,12 +126,12 @@ export class Canvas implements Engine {
     this._ctx.stroke();
   }
 
-  private color(point: Point, background: string): void {
+  protected color(point: Point, background: string): void {
     this._ctx.fillStyle = background;
     this._ctx.fillRect(point.x, point.y, this._styles.size, this._styles.size);
   }
 
-  private text(point: Point, text: string, color: string): void {
+  protected text(point: Point, text: string, color: string): void {
     this._ctx.textAlign = 'center';
     this._ctx.fillStyle = color;
     this._ctx.fillText(

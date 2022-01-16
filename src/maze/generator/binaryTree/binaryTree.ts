@@ -1,22 +1,18 @@
 import { random } from '../../../math/random/random';
-import { Direction } from '../../grid/cell/direction';
 import { Grid } from '../../grid/Grid';
 import type { Generator } from '../Generator.type';
-import type { Options } from '../Options.type';
 
-export const binaryTree: Generator = (options: Options) => {
-  const grid = new Grid(options);
+export const binaryTree: Generator = (factory: () => Grid): Grid => {
+  const grid = factory();
 
   grid.forEachCell((cell) => {
-    const north = cell.getNeighbour(Direction.North);
-    const east = cell.getNeighbour(Direction.East);
     const neighbours = [];
 
-    if (north) {
-      neighbours.push(north);
+    if (cell.north) {
+      neighbours.push(cell.north);
     }
-    if (east) {
-      neighbours.push(east);
+    if (cell.east) {
+      neighbours.push(cell.east);
     }
 
     if (neighbours.length) {
