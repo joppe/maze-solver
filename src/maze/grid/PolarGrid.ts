@@ -25,6 +25,12 @@ export class PolarGrid extends Grid<PolarCell> {
 
   public getCell(position: Position): PolarCell | undefined {
     if (this.isValidPosition(position)) {
+      /**
+       * Normalize the position, this is done because otherwise there will be a horizontal line on the right half
+       * of the center. This is because if the cell has no neighbour on the `cw` it will draw a line on the bottom.
+       * When the requested column is larger than the last column, return the first column, that is the one that
+       * will be rendered next to it.
+       */
       const normalizedPosition = {
         row: position.row,
         column: position.column % this.rowCellCount[position.row],
