@@ -23,8 +23,5 @@ export function fromTemplate(template: string): Mask {
     });
   });
 
-  console.log(lines);
-  console.log(lines.length);
-
   return mask;
 }
